@@ -10,6 +10,7 @@
   "license": "CC-BY-SA-4.0",
   "dependencies": {
     "htmlparser2": "^3.9.2",
+    "mysql": "^2.15.0",
     "request": "^2.83.0"
   },
   "devDependencies": {
