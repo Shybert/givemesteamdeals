@@ -10,7 +10,7 @@ const getSteamIdsEmitter = new GetSteamIdsEmitter();
 // Setting up MySQL
 const connection = mysql.createConnection({
     user: "root",
-    password: "3oFkAlziyG",
+    password: "nSPemHJ5Hc",
     database: "games_list_test",
 });
 connection.connect((err) => {
@@ -76,13 +76,10 @@ function findSteamIds() {
             onopentag: (name, attribs) => {
                 if (name === "a" && attribs.class === "search_result_row ds_collapse_flag") {
                     if (attribs["data-ds-packageid"] !== undefined) {
-                        connection.query(`INSERT INTO games(steam_id) VALUES(${attribs["data-ds-packageid"]})`, (err) => {
+                        connection.query(`INSERT INTO package(package_id) VALUES(${attribs["data-ds-packageid"]})`, (parserErr) => {
+                            console.log(parserErr);
                         });
                         console.log(`Package ID: ${attribs["data-ds-packageid"]}`);
-                    } else {
-                        connection.query(`INSERT INTO games(steam_id) VALUES(${attribs["data-ds-appid"]})`, (err) => {
-                        });
-                        console.log(`App ID: ${attribs["data-ds-appid"]}`);
                     }
                 }
             },
