@@ -9,7 +9,7 @@ const getSteamIdsEmitter = new GetSteamIdsEmitter();
 // Setting up MySQL
 const connection = mysql.createConnection({
     user: "root",
-    password: "nSPemHJ5Hc",
+    password: "3oFkAlziyG",
     database: "gamesdb",
 });
 connection.connect((err) => {
@@ -25,6 +25,7 @@ let currentEntry = 0;
 let appArray;
 
 // Requesting JSON file from SteamSpy
+console.log("Requesting SteamSpy JSON file");
 request({url: "https://steamspy.com/api.php?request=all", json: true}, (err, res, body) => {
     if (err) {
         return console.log(`Error while requesting JSON file form SteamSpy: ${err}`);
@@ -42,16 +43,35 @@ request({url: "https://steamspy.com/api.php?request=all", json: true}, (err, res
 });
 
 getSteamIdsEmitter.on("nextInsert", () => {
-    insertIntoMySql();
+    if (currentEntry < amountOfEntries) {
+        insertIntoMySql();
+    } else {
+        console.log("Finished collecting Steam IDs");
+    }
 });
 
 function insertIntoMySql() {
-    connection.query(`INSERT INTO app(steam_id) values(${appArray[currentEntry][0]})`, (insertErr) => {
+    const gameInfoObj = appArray[currentEntry][1];
+    connection.query(`  INSERT INTO app(steam_id, steam_rating_positive, steam_rating_negative, owners, players_forever, players_2weeks, average_forever, average_2weeks, median_forever, median_2weeks) values(
+                        ${appArray[currentEntry][0]},
+                        ${gameInfoObj.positive},
+                        ${gameInfoObj.negative},
+                        ${gameInfoObj.owners},
+                        ${gameInfoObj.players_forever},
+                        ${gameInfoObj.players_2weeks},
+                        ${gameInfoObj.average_forever},
+                        ${gameInfoObj.average_2weeks},
+                        ${gameInfoObj.median_forever},
+                        ${gameInfoObj.median_2weeks})`, (insertErr, results, fields) => {
         if (insertErr) {
-            return console.log(`Error while inserting data into MySQL: ${insertErr}`);
+            console.log(`Error while inserting data into MySQL: ${insertErr}`);
+            getSteamIdsEmitter.emit("nextInsert");
+            return;
         }
-        console.log(currentEntry);
-        currentEntry += 1;
-        getSteamIdsEmitter.emit("nextInsert");
+        if (results) {
+            console.log(currentEntry);
+            currentEntry += 1;
+            getSteamIdsEmitter.emit("nextInsert");
+        }
     });
 }
