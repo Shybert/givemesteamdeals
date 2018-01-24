@@ -64,14 +64,61 @@ function insertIntoMySql() {
                         ${gameInfoObj.median_forever},
                         ${gameInfoObj.median_2weeks})`, (insertErr, results, fields) => {
         if (insertErr) {
-            console.log(`Error while inserting data into MySQL: ${insertErr}`);
+            console.log(`Error while inserting general data into MySQL: ${insertErr}`);
             getSteamIdsEmitter.emit("nextInsert");
             return;
         }
         if (results) {
-            console.log(currentEntry);
-            currentEntry += 1;
-            getSteamIdsEmitter.emit("nextInsert");
+            // console.log(currentEntry);
+            // currentEntry += 1;
+            // getSteamIdsEmitter.emit("nextInsert");
+            const developer = connection.escape(gameInfoObj.developer);
+            connection.query(`SELECT name FROM company WHERE name = ${developer}`, (selectDevErr, selectDevResults, selectDevFields) => {
+                if (selectDevErr) {
+                    return console.log(`Error while trying to select dev: ${selectDevErr}`);
+                }
+                // console.log(selectDevResults);
+                // connection.query(`INSERT INTO company(name) VALUES(${developer})`, (insertDevErr, insertDevResults, insertDevFields) => {
+                //     if (insertDevErr) {
+                //         console.log(`Error while inserting dev into MySQL: ${insertDevErr}`);
+                //     }
+                //     if (insertDevResults) {
+                //         console.log("Inserting developer");
+                //         console.log(currentEntry);
+                //         currentEntry += 1;
+                //         getSteamIdsEmitter.emit("nextInsert");
+                //     }
+                // });
+                // console.log(currentEntry);
+                // currentEntry += 1;
+                // getSteamIdsEmitter.emit("nextInsert");
+
+                // if (selectDevResults) {
+                //     console.log(`Selecting dev results: ${selectDevResults}`);
+                //     console.log(currentEntry);
+                //     currentEntry += 1;
+                //     getSteamIdsEmitter.emit("nextInsert");
+
+                // CHECK FOR NAME === ""
+                if (selectDevResults.length === 0 && developer !== "") {
+                    connection.query(`INSERT INTO company(name) VALUES(${developer})`, (insertDevErr, insertDevResults, insertDevFields) => {
+                        if (insertDevErr) {
+                            console.log(`Error while inserting dev into MySQL: ${insertDevErr}`);
+                        }
+                        if (insertDevResults) {
+                            console.log("Inserting developer");
+                            console.log(currentEntry);
+                            currentEntry += 1;
+                            getSteamIdsEmitter.emit("nextInsert");
+                        }
+                    });
+                } else {
+                    console.log(`Developer already inserted, skipping`);
+                    console.log(currentEntry);
+                    currentEntry += 1;
+                    getSteamIdsEmitter.emit("nextInsert");
+                }
+            });
         }
     });
 }
