@@ -11,7 +11,7 @@ function getPackages() {
     // Connecting to MySQL
     const connection = mysql.createConnection({
         user: "root",
-        password: "nSPemHJ5Hc",
+        password: "3oFkAlziyG",
         database: "gamesdb",
     });
     connection.connect((err) => {
@@ -22,11 +22,10 @@ function getPackages() {
     });
 
     // Setting up variables
-    // The initial steam link, used to find the number of pages to go through
-    const initialSteamLink = "http://store.steampowered.com/search/results?sort_by=Released_DESC&category1=998&cc=en&v5=1&page=1";
-
     let numberOfPages;
     let currentPage;
+    // The initial steam link, used to find the number of pages to go through
+    const initialSteamLink = "http://store.steampowered.com/search/results?sort_by=Released_DESC&category1=998&cc=en&v5=1&page=1";
 
     request(initialSteamLink, (err, res, body) => {
         if (err) {
@@ -39,7 +38,9 @@ function getPackages() {
             ontext: (text) => {
                 if (Number(text) > 750) {
                     numberOfPages = Number(text);
-                    getPackagesEmitter.emit("pageNumEvent");
+                    console.log(`The number of pages to go through is: ${numberOfPages}`);
+                    currentPage = 1;
+                    getPackagesEmitter.emit("nextSearchPageEvent");
                 }
             },
         });
@@ -47,19 +48,12 @@ function getPackages() {
         parser.end();
     });
 
-    getPackagesEmitter.on("pageNumEvent", () => {
-        console.log(`The number of pages to go through is: ${numberOfPages}`);
-
-        // Sets up the page to start going through
-        currentPage = 140;
-        findSteamIds();
-    });
-
     getPackagesEmitter.on("nextSearchPageEvent", () => {
         if (currentPage <= numberOfPages) {
             findSteamIds();
         } else {
             console.log("Finished going through Steam search pages");
+            connection.end();
         }
     });
 
@@ -126,23 +120,44 @@ function getPackages() {
             }
             if (results) {
                 console.log(`Created package master table`);
-                createAppPackageJoinTable(packageId, appIds);
+                checkIfAppsExist(packageId, appIds);
             }
         });
     }
 
-    function createAppPackageJoinTable(packageId, appIds) {
+    function checkIfAppsExist(packageId, appIds) {
         appIds.forEach((id) => {
-            connection.query(`  INSERT INTO app_package(package_master_package_master_id, app_steam_id) VALUES(
-                                (SELECT package_master_id FROM package_master WHERE app_steam_id = ${packageId}),
-                                (SELECT steam_id FROM app WHERE steam_id = ${id}))`, (err, results) => {
+            connection.query(`SELECT steam_id FROM app WHERE steam_id = ${id}`, (err, results) => {
                 if (err) {
-                    return console.log(`Error while setting up app_package join table, with package_master_id(${packageId}) and steam_id(${id}): ${err}`);
+                    return console.log(`Error while checking if app with STEAM_ID(${id}) exists: ${err}`);
                 }
-                if (results) {
-                    console.log("App_package join table created successfully");
+                if (results.length === 0) {
+                    console.log(`App in PACKAGE(${packageId}) not inserted yet, inserting`);
+                    connection.query(`INSERT INTO app(steam_id) VALUES (${id})`, (insertErr, insertResults) => {
+                        if (insertErr) {
+                            return console.log(`Error while inserting STEAM_ID(${id}) required for PACKAGE(${packageId}): ${insertErr}`);
+                        }
+                        if (insertResults) {
+                            insertIntoAppPackageJoinTable(packageId, id);
+                        }
+                    });
+                } else {
+                    insertIntoAppPackageJoinTable(packageId, id);
                 }
             });
+        });
+    }
+
+    function insertIntoAppPackageJoinTable(packageId, id) {
+        connection.query(`  INSERT INTO app_package(package_master_package_master_id, app_steam_id) VALUES(
+                                        (SELECT package_master_id FROM package_master WHERE app_steam_id = ${packageId}),
+                                        (SELECT steam_id FROM app WHERE steam_id = ${id}))`, (err, results) => {
+            if (err) {
+                return console.log(`Error while setting up app_package join table, with package_master_id(${packageId}) and steam_id(${id}): ${err}`);
+            }
+            if (results) {
+                console.log("App_package join table created successfully");
+            }
         });
     }
 }

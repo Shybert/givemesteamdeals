@@ -10,7 +10,7 @@ function getSteamSpyData() {
     // Setting up MySQL
     const connection = mysql.createConnection({
         user: "root",
-        password: "nSPemHJ5Hc",
+        password: "3oFkAlziyG",
         database: "gamesdb",
     });
     connection.connect((err) => {
