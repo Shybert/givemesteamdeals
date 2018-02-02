@@ -2,7 +2,7 @@ const request = require("request");
 const mysql = require("mysql");
 const EventEmitter = require("events");
 
-function getSteamSpyData() {
+function getSteamSpyData(callback) {
     // Setting up event emitters
     class SteamSpyEmitter extends EventEmitter {}
     const steamSpyEmitter = new SteamSpyEmitter();
@@ -43,6 +43,7 @@ function getSteamSpyData() {
             insertIntoMySql();
         } else {
             console.log("Finished collecting Steam IDs");
+            callback(null, "completed");
             connection.end();
         }
     });

@@ -3,7 +3,7 @@ const htmlparser = require("htmlparser2");
 const mysql = require("mysql");
 const EventEmitter = require("events");
 
-function getPackages() {
+function getPackages(callback) {
     // Setting up event emitter
     class GetPackagesEmitter extends EventEmitter {}
     const getPackagesEmitter = new GetPackagesEmitter();
@@ -53,6 +53,7 @@ function getPackages() {
             findSteamIds();
         } else {
             console.log("Finished going through Steam search pages");
+            callback(null, "completed");
             connection.end();
         }
     });
@@ -71,7 +72,6 @@ function getPackages() {
             const parser = new htmlparser.Parser({
                 onopentag: (name, attribs) => {
                     if (name === "a" && attribs["data-ds-packageid"] !== undefined) {
-                        console.log("yee");
                         if (attribs["data-ds-packageid"] !== undefined) {
                             const packageId = attribs["data-ds-packageid"];
                             const appIds = attribs["data-ds-appid"].split(",");
