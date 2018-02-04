@@ -1,7 +1,7 @@
 const request = require("request");
 const mysql = require("mysql");
 const EventEmitter = require("events");
-
+getSteamSpyData();
 function getSteamSpyData(callback) {
     // Setting up event emitters
     class SteamSpyEmitter extends EventEmitter {}
@@ -10,7 +10,7 @@ function getSteamSpyData(callback) {
     // Setting up MySQL
     const connection = mysql.createConnection({
         user: "root",
-        password: "3oFkAlziyG",
+        password: "nSPemHJ5Hc",
         database: "gamesdb",
     });
     connection.connect((err) => {
@@ -50,37 +50,36 @@ function getSteamSpyData(callback) {
 
     function insertIntoMySql() {
         const gameInfoObj = appArray[currentEntry][1];
-        // Checking if game has been inserted already
-        connection.query(`SELECT steam_id FROM app WHERE steam_id = ${appArray[currentEntry][0]}`, (err, results) => {
+        console.log(`\n--- GAME ID: ${appArray[currentEntry][0]} ---`);
+        // Inserting the basic information to MySQL
+        connection.query(`  INSERT INTO app(steam_id, steam_rating_positive, steam_rating_negative, owners, players_forever, players_2weeks, average_forever, average_2weeks, median_forever, median_2weeks) values(
+                            ${appArray[currentEntry][0]},
+                            ${gameInfoObj.positive},
+                            ${gameInfoObj.negative},
+                            ${gameInfoObj.owners},
+                            ${gameInfoObj.players_forever},
+                            ${gameInfoObj.players_2weeks},
+                            ${gameInfoObj.average_forever},
+                            ${gameInfoObj.average_2weeks},
+                            ${gameInfoObj.median_forever},
+                            ${gameInfoObj.median_2weeks})
+                            ON DUPLICATE KEY UPDATE
+                            steam_rating_positive = ${gameInfoObj.positive},
+                            steam_rating_negative = ${gameInfoObj.negative},
+                            owners = ${gameInfoObj.owners},
+                            players_forever = ${gameInfoObj.players_forever},
+                            players_2weeks = ${gameInfoObj.players_2weeks},
+                            average_forever = ${gameInfoObj.average_forever},
+                            average_2weeks = ${gameInfoObj.average_2weeks},
+                            median_forever = ${gameInfoObj.median_forever},
+                            median_2weeks = ${gameInfoObj.median_2weeks}`, (err, results) => {
             if (err) {
-                return console.log(`Error while checking if game has been inserted already: ${err}`);
+                return console.log(`Error while inserting basic data into MySQL: ${err}`);
             }
-            if (results.length === 0) {
-                // Inserting the basic information to MySQL
-                connection.query(`  INSERT INTO app(steam_id, steam_rating_positive, steam_rating_negative, owners, players_forever, players_2weeks, average_forever, average_2weeks, median_forever, median_2weeks) values(
-                                    ${appArray[currentEntry][0]},
-                                    ${gameInfoObj.positive},
-                                    ${gameInfoObj.negative},
-                                    ${gameInfoObj.owners},
-                                    ${gameInfoObj.players_forever},
-                                    ${gameInfoObj.players_2weeks},
-                                    ${gameInfoObj.average_forever},
-                                    ${gameInfoObj.average_2weeks},
-                                    ${gameInfoObj.median_forever},
-                                    ${gameInfoObj.median_2weeks})`, (insertErr, insertResults) => {
-                    if (insertErr) {
-                        return console.log(`Error while inserting general data into MySQL: ${insertErr}`);
-                    }
-                    // Upon results callback, insert developer
-                    if (insertResults) {
-                        insertCompany(connection.escape(gameInfoObj.developer), "developer");
-                    }
-                });
-            } else {
-                console.log("Game has already been inserted, skipping");
-                console.log(currentEntry);
-                currentEntry += 1;
-                steamSpyEmitter.emit("nextInsert");
+            // Upon results callback, insert developer
+            if (results) {
+                console.log("Basic data inserted successfully");
+                insertCompany(connection.escape(gameInfoObj.developer), "developer");
             }
         });
     }
@@ -102,13 +101,13 @@ function getSteamSpyData(callback) {
                         return console.log(`Error while inserting company with NAME(${companyNameVar}): ${err}`);
                     }
                     if (insertCompanyResults) {
-                        console.log("Inserting company");
+                        console.log(`Inserting ${devOrPub}`);
                         createCompanyJoinTable(companyNameVar, devOrPub);
                     }
                 });
             } else {
                 // Company has already been inserted, do not insert
-                console.log("Company already inserted, skipping");
+                console.log(`${devOrPub} already inserted`);
                 createCompanyJoinTable(companyNameVar, devOrPub);
             }
         });
@@ -116,16 +115,19 @@ function getSteamSpyData(callback) {
 
     function createCompanyJoinTable(companyName, devOrPub) {
         // Queries information from table App and Company, then sets up the join table
-        connection.query(`INSERT INTO ${devOrPub}(company_company_id, app_steam_id) VALUES((SELECT company_id FROM company WHERE name = ${companyName}), (SELECT steam_id FROM app WHERE steam_id = ${appArray[currentEntry][0]}))`, (err, results) => {
+        connection.query(`  INSERT INTO ${devOrPub}(company_company_id, app_steam_id) VALUES(
+                            (SELECT company_id FROM company WHERE name = ${companyName}),
+                            (SELECT steam_id FROM app WHERE steam_id = ${appArray[currentEntry][0]}))
+                            ON DUPLICATE KEY UPDATE app_steam_id = (SELECT steam_id FROM app WHERE steam_id = ${appArray[currentEntry][0]})`, (err, results) => {
             if (err) {
                 return console.log(`Error while creating join table with COMPANY(${companyName}) and STEAMID(${appArray[currentEntry][0]}): ${err}`);
             }
             if (results) {
-                console.log("Company join table created succesfully");
+                console.log(`${devOrPub} join table created succesfully`);
                 if (devOrPub === "developer") {
                     insertCompany(connection.escape(appArray[currentEntry][1].publisher), "publisher");
                 } else if (devOrPub === "publisher") {
-                    console.log(currentEntry);
+                    console.log(`Current entry: ${currentEntry}`);
                     currentEntry += 1;
                     steamSpyEmitter.emit("nextInsert");
                 } else {

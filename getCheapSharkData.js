@@ -2,11 +2,11 @@ const mysql = require("mysql");
 const request = require("request");
 const EventEmitter = require("events");
 getCheapSharkData();
-function getCheapSharkData(callback {
+function getCheapSharkData(callback) {
     // Connecting to MySQL
     const connection = mysql.createConnection({
         user: "root",
-        password: "3oFkAlziyG",
+        password: "nSPemHJ5Hc",
         database: "gamesdb",
     });
     connection.connect((err) => {
@@ -32,7 +32,7 @@ function getCheapSharkData(callback {
         }
         if (results) {
             console.log(`Amount of Steam IDs: ${results.length}`);
-            currentSet = 287;
+            currentSet = 278;
             IDsArray = results;
             setUpLinks();
         }
@@ -202,7 +202,7 @@ function getCheapSharkData(callback {
         // Check if on_sale matches between CheapShark and gamesdb
         connection.query(`SELECT on_sale FROM app WHERE steam_id = ${id}`, (err, results) => {
             if (err) {
-                return console.log(`Error while querying for on_sale`);
+                return console.log(`Error while querying for on_sale: ${err}`);
             }
             if (results) {
                 const onSaleDB = Number(results[0].on_sale);
