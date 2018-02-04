@@ -1,7 +1,7 @@
 const request = require("request");
 const mysql = require("mysql");
 const EventEmitter = require("events");
-getSteamSpyData();
+
 function getSteamSpyData(callback) {
     // Setting up event emitters
     class SteamSpyEmitter extends EventEmitter {}
@@ -10,7 +10,7 @@ function getSteamSpyData(callback) {
     // Setting up MySQL
     const connection = mysql.createConnection({
         user: "root",
-        password: "nSPemHJ5Hc",
+        password: "3oFkAlziyG",
         database: "gamesdb",
     });
     connection.connect((err) => {
