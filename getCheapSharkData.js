@@ -32,7 +32,7 @@ function getCheapSharkData(callback) {
         }
         if (results) {
             console.log(`Amount of Steam IDs: ${results.length}`);
-            currentSet = 287;
+            currentSet = 0;
             IDsArray = results;
             setUpLinks();
         }
