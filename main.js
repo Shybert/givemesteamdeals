@@ -4,7 +4,8 @@ const getCheapSharkData = require("./getCheapSharkData");
 const schedule = require("node-schedule");
 
 // Scheduled
-const i = schedule.scheduleJob("* 0 * * *", () => {
+console.log("Scheduled started, running at 00:00 every day");
+const i = schedule.scheduleJob("0 0 * * *", () => {
     console.log("Scheduling job");
     getSteamSpyData((err, results) => {
         if (results === "completed") {
