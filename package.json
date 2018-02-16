@@ -9,6 +9,7 @@
   "author": "a",
   "license": "CC-BY-SA-4.0",
   "dependencies": {
+    "async": "^2.6.0",
     "chart.js": "^2.7.1",
     "express": "^4.16.2",
     "hbs": "^4.0.1",

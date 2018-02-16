@@ -1,46 +1,41 @@
-const getSteamSpyData = require("./getSteamSpyData");
-const getPackages = require("./getPackages");
-const getCheapSharkData = require("./getCheapSharkData");
-const schedule = require("node-schedule");
+const express = require("express");
+const path = require("path");
+const hbs = require("hbs");
 
-// Scheduled
-console.log("Scheduled started, running at 00:00 every day");
-const i = schedule.scheduleJob("0 0 * * *", () => {
-    console.log("Scheduling job");
-    getSteamSpyData((err, results) => {
-        if (results === "completed") {
-            console.log("\nFunction getSteamSpyData has completed");
-            console.log("Executing function getPackages()");
-            getPackages((pacakgeErr, packageResults) => {
-                if (packageResults === "completed") {
-                    console.log("\nFunction getPackages has completed");
-                    console.log("Executing function getCheapSharkData()");
-                    getCheapSharkData((cheapSharkErr, cheapSharkResults) => {
-                        if (cheapSharkResults === "completed") {
-                            console.log("\nFunction getCheapSharkData() has completed");
-                        }
-                    });
-                }
-            });
-        }
-    });
+// Setting up basics
+const app = express();
+app.set("port", 3000);
+app.set('view engine', 'hbs');
+app.use(express.static(path.join(__dirname, "public")));
+hbs.registerPartials(path.join(__dirname, "views", "partials"));
+
+// App page requested
+app.get("/id/:id", (req, res) => {
+    const id = req.params.id;
+    if (typeof id !== "number") {
+        console.log(`Invalid NaN Steam ID requested`);
+        return res.render("404");
+    }
+    console.log(`\nApp page with ID #${id} requested`);
+    res.send("ye");
 });
 
-// No schedule
-// getSteamSpyData((err, results) => {
-//     if (results === "completed") {
-//         console.log("\nFunction getSteamSpyData has completed");
-//         console.log("Executing function getPackages()");
-//         getPackages((pacakgeErr, packageResults) => {
-//             if (packageResults === "completed") {
-//                 console.log("\nFunction getPackages has completed");
-//                 console.log("Executing function getCheapSharkData()");
-//                 getCheapSharkData((cheapSharkErr, cheapSharkResults) => {
-//                     if (cheapSharkResults === "completed") {
-//                         console.log("\nFunction getCheapSharkData() has completed");
-//                     }
-//                 });
-//             }
-//         });
-//     }
-// });
+// Homepage requested
+app.get("/", (req, res) => {
+    console.log("\nMain page requested");
+    res.render("index");
+});
+
+// No webpages found, 404 error
+app.use((req, res) => {
+    console.log("\n404 error encountered");
+    res.status(404);
+    res.render("404");
+});
+
+app.listen(app.get("port"), () => {
+    console.log(`Started server, listening on port ${app.get("port")}`);
+});
+
+// Functions
+

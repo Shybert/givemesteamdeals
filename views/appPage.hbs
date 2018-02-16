@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}}</title>
+    </head>
+    <body>
+        <div id="appTitle">
+            <h1>{{title}}</h1>
+        </div>
+        <div id="appInfo">
+            <div id="basics">
+                <div id="picture">
+                    <img src={{thumbnail}} alt="App image">
+                </div>
+
+                <div id="info">
+                    <div id="genericInfo">
+                        <div id="price">
+                            Example price
+                        </div>
+                        <span id="developers">Developer(s): {{developers}}</span>
+                        <br>
+                        <span id="publishers">Publisher(s): {{publishers}}</span>
+                        <br>
+                        <span id="releaseDate">Release date: {{release_date}}</span>
+                    </div>
+
+                    <div id="steamSpyInfo">
+                        <span id="owners">Owners: {{owners}}</span>
+                        <br>
+                        <span id="playersForever">Total players: {{players_forever}}</span>
+                        <br>
+                        <span id="players2Weeks">Players in the last 2 weeks: {{players_2weeks}}</span>
+                        <br>
+                        <span id="averageForever">Average players: {{average_forever}}</span>
+                        <br>
+                        <span id="average2Weeks">Average players in the last 2 weeks: {{average_2weeks}}</span>
+                        <br>
+                        <span id="medianForever">Median players: {{median_forever}}</span>
+                        <br>
+                        <span id="median2Weeks">Median players in the last 2 weeks: {{median_2weeks}}</span>
+                    </div>
+                    <button id="enter">Enter</button>
+                    <div id="ratingInfo">
+                        <div id="ratingChart" style="width:400px; height:400px;">
+                            <canvas id="ratingCanvas"></canvas>
+                        </div>
+                        <div id="ratingInfo">
+                            <div id="ratingText">
+                                Rating text: {{steam_rating_text}}
+                            </div>
+                            <div id="ratingPosNeg">
+                                <span id="ratingPositive">Positive: {{steam_rating_positive}}</span>
+                                <span id="ratingNegative">Negative: {{steam_rating_negative}}</span>
+                            </div>
+                        </div>
+                        <div id="ratingMetacriticLink">
+                            Metacritic link: {{metacritic_link}} {{#unless metacritic_link}}Not available{{/unless}}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="priceCharts">
+                    <div id="priceHistory">
+                        <canvas id="priceHistoryCanvas"></canvas>
+                    </div>
+                    <div id="saleHistory">
+                        Example sale_history
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

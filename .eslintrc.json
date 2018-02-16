@@ -10,7 +10,9 @@
         "no-use-before-define": ["error", {"functions": false}],
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "import/newline-after-import": ["error", {"count": 0}],
-        "no-console": ["off"]
+        "no-console": ["off"],
+        "prefer-destructuring": ["off"],
+        "consistent-return": ["off"]
     },
     "env": {
         "browser": true,
