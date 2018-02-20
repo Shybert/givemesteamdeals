@@ -12,7 +12,8 @@
         "import/newline-after-import": ["error", {"count": 0}],
         "no-console": ["off"],
         "prefer-destructuring": ["off"],
-        "consistent-return": ["off"]
+        "consistent-return": ["off"],
+        "no-loop-func": ["off"]
     },
     "env": {
         "browser": true,

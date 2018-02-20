@@ -16,7 +16,7 @@ hbs.registerPartials(path.join(__dirname, "views", "partials"));
 // Connecting to MySQL
 const connection = mysql.createConnection({
     user: "root",
-    password: "nSPemHJ5Hc",
+    password: "3oFkAlziyG",
     database: "gamesdb",
 });
 connection.connect((err) => {
@@ -46,6 +46,69 @@ app.get("/id/:id", (req, res) => {
             console.log(data); // temp
             console.log("\n");
             res.render("appPage", data);
+        }
+    });
+});
+
+// Search page requested
+app.get("/search", (req, res) => {
+    console.log(`\n--- Search page requested ---`);
+    const query = req.query.searchquery;
+    console.log(query);
+
+    // Search through db
+    connection.query(`SELECT * FROM app WHERE title REGEXP '${query}'`, (err, results) => {
+        if (err) {
+            return console.log(`Error while finding info for the search: ${err}`);
+        }
+        if (results) {
+            const data = results;
+            console.log(data);
+            // Max length to return is 50
+            if (data.length > 50) {
+                data.length = 50;
+            }
+            // for (let i = 0; i < data.length; i += 1) {
+            //     getPriceSaleInfo(data[i].steam_id, data[i], (priceErr, dataObj) => {
+            //         if (priceErr) {
+            //             return console.log(`Error while getting price: ${priceErr}`);
+            //         }
+            //         if (dataObj) {
+            //             console.log(`Results from getting sale info: ${JSON.stringify(dataObj)}`);
+            //             data[i] = dataObj;
+
+            //             if (i === data.length - 1) {
+            //                 console.log("Reached end of search price query");
+            //                 const obj = {};
+            //                 obj.data = data;
+            //                 res.render("search", obj);
+            //             }
+            //         }
+            //     });
+            // }
+
+            // data.forEach((element, index) => {
+            //     getPriceSaleInfo(element.steam_id, element, (priceErr, dataObj) => {
+            //         if (priceErr) {
+            //             return console.log(`Error while getting price: ${priceErr}`);
+            //         }
+            //         if (dataObj) {
+            //             console.log(`Results from getting sale info: ${JSON.stringify(dataObj)}`);
+            //             data[index] = dataObj;
+
+            //             if (index === data.length - 1 || index === 50) {
+            //                 console.log("Reached end of search price query");
+            //                 const obj = {};
+            //                 obj.data = data;
+            //                 res.render("search", obj);
+            //             }
+            //         }
+            //     });
+            // });
+
+            const obj = {};
+            obj.data = results;
+            res.render("search", obj);
         }
     });
 });
@@ -138,43 +201,14 @@ function genericData(id, callback) {
 
             // Get price info now
             console.log(`Querying price info`);
-            connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id} AND end_date IS NULL`, (priceErr, priceResults) => {
+            getPriceSaleInfo(id, data, (priceErr, dataObj) => {
                 if (priceErr) {
-                    return callback(err);
+                    return callback(priceErr);
                 }
-                if (priceResults) {
-                    console.log(`Price info found`);
-                    data.price_history = priceResults[0];
-                    
-                    // Check if on sale
-                    if (data.on_sale === 1) {
-                        console.log("On sale");
-                        // Game is on sale, get sale info
-                        console.log(`Querying for sale info`);
-                        connection.query(`SELECT * FROM sale_history WHERE app_steam_id = ${id} AND end_date IS NULL`, (saleErr, saleResults) => {
-                            if (saleErr) {
-                                return callback(err);
-                            }
-                            if (saleResults) {
-                                console.log("Sale info found");
-                                data.sale_history = saleResults[0];
-
-                                const price = data.price_history.price;
-                                const salePrice = data.sale_history.price;
-                                data.discount_percent = Math.round(((price - salePrice) / price) * 100);
-
-                                callback(null, id, data, "developer");
-                            }
-                        });
-                    } else {
-                        console.log("Not on sale");
-                        // Game isn't on sale, set on_sale to zero for the template
-                        data.on_sale = null;
-                        callback(null, id, data, "developer");
-                    }
+                if (dataObj) {
+                    callback(null, id, dataObj, "developer");
                 }
             });
-            // callback(null, id, data, "developer");
         }
     });
 }
@@ -216,6 +250,46 @@ function getDevPub(id, data, devPub, callback) {
                         }
                     }
                 });
+            }
+        }
+    });
+}
+
+function getPriceSaleInfo(id, data, callback) {
+    const dataObj = data;
+    connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id} AND end_date IS NULL`, (priceErr, priceResults) => {
+        if (priceErr) {
+            return callback(priceErr);
+        }
+        if (priceResults) {
+            console.log(`Price info found`);
+            dataObj.price_history = priceResults[0];
+
+            // Check if on sale
+            if (dataObj.on_sale === 1) {
+                console.log("On sale");
+                // Game is on sale, get sale info
+                console.log(`Querying for sale info`);
+                connection.query(`SELECT * FROM sale_history WHERE app_steam_id = ${id} AND end_date IS NULL`, (saleErr, saleResults) => {
+                    if (saleErr) {
+                        return callback(saleErr);
+                    }
+                    if (saleResults) {
+                        console.log("Sale info found");
+                        dataObj.sale_history = saleResults[0];
+
+                        const price = dataObj.price_history.price;
+                        const salePrice = dataObj.sale_history.price;
+                        dataObj.discount_percent = Math.round(((price - salePrice) / price) * 100);
+
+                        callback(null, dataObj);
+                    }
+                });
+            } else {
+                console.log("Not on sale");
+                // Game isn't on sale, set on_sale to zero for the template
+                dataObj.on_sale = null;
+                callback(null, dataObj);
             }
         }
     });

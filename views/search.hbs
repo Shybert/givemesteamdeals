@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Search</title>
+    </head>
+    <body>
+        <h1>A search page</h1>
+        {{#each data}}
+        <div class="gameBox">
+            <div class="thumbnail"><img src={{thumbnail}} alt="App thumbnail"></div>
+            <div class="info">
+                <div class="title">
+                    {{title}}
+                </div>
+                <div class="price">
+                    {{> price}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </body>
+</html>

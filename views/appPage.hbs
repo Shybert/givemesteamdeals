@@ -16,6 +16,8 @@
                 <div id="info">
                     <div id="genericInfo">
                         <div id="price">
+                            {{> price}}
+                            <!--
                             {{#if on_sale}}
                             <div id="discount_percent">{{discount_percent}} %</div>
                             <div id="priceOnSale">
@@ -26,6 +28,7 @@
                             {{else}}
                             $ {{price_history.price}}
                             {{/if}}
+                            -->
                         </div>
                         <span id="developers">Developer(s): {{developers}} {{#unless developers}}Not available{{/unless}}</span>
                         <br>
