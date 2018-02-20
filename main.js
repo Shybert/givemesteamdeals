@@ -16,7 +16,7 @@ hbs.registerPartials(path.join(__dirname, "views", "partials"));
 // Connecting to MySQL
 const connection = mysql.createConnection({
     user: "root",
-    password: "3oFkAlziyG",
+    password: "nSPemHJ5Hc",
     database: "gamesdb",
 });
 connection.connect((err) => {
@@ -54,61 +54,39 @@ app.get("/id/:id", (req, res) => {
 app.get("/search", (req, res) => {
     console.log(`\n--- Search page requested ---`);
     const query = req.query.searchquery;
-    console.log(query);
+    console.log(`Search query: ${query}`);
 
     // Search through db
     connection.query(`SELECT * FROM app WHERE title REGEXP '${query}'`, (err, results) => {
         if (err) {
+            res.render("search", {nothing: "No games found, sorry!"});
             return console.log(`Error while finding info for the search: ${err}`);
         }
         if (results) {
             const data = results;
             console.log(data);
+
+            // If no games found
+            if (data.length === 0) {
+                return res.render("search", {nothing: "No games found, sorry!"});
+            }
+
             // Max length to return is 50
             if (data.length > 50) {
                 data.length = 50;
             }
-            // for (let i = 0; i < data.length; i += 1) {
-            //     getPriceSaleInfo(data[i].steam_id, data[i], (priceErr, dataObj) => {
-            //         if (priceErr) {
-            //             return console.log(`Error while getting price: ${priceErr}`);
-            //         }
-            //         if (dataObj) {
-            //             console.log(`Results from getting sale info: ${JSON.stringify(dataObj)}`);
-            //             data[i] = dataObj;
 
-            //             if (i === data.length - 1) {
-            //                 console.log("Reached end of search price query");
-            //                 const obj = {};
-            //                 obj.data = data;
-            //                 res.render("search", obj);
-            //             }
-            //         }
-            //     });
-            // }
+            async.each(data, getPriceSaleInfo, (priceErr) => {
+                if (priceErr) {
+                    return console.log(`Error while querying for price for search: ${err}`);
+                }
+                console.log(`Finished async each`);
+                console.log(data);
 
-            // data.forEach((element, index) => {
-            //     getPriceSaleInfo(element.steam_id, element, (priceErr, dataObj) => {
-            //         if (priceErr) {
-            //             return console.log(`Error while getting price: ${priceErr}`);
-            //         }
-            //         if (dataObj) {
-            //             console.log(`Results from getting sale info: ${JSON.stringify(dataObj)}`);
-            //             data[index] = dataObj;
-
-            //             if (index === data.length - 1 || index === 50) {
-            //                 console.log("Reached end of search price query");
-            //                 const obj = {};
-            //                 obj.data = data;
-            //                 res.render("search", obj);
-            //             }
-            //         }
-            //     });
-            // });
-
-            const obj = {};
-            obj.data = results;
-            res.render("search", obj);
+                const obj = {};
+                obj.data = results;
+                res.render("search", obj);
+            });
         }
     });
 });
@@ -201,7 +179,7 @@ function genericData(id, callback) {
 
             // Get price info now
             console.log(`Querying price info`);
-            getPriceSaleInfo(id, data, (priceErr, dataObj) => {
+            getPriceSaleInfo(data, (priceErr, dataObj) => {
                 if (priceErr) {
                     return callback(priceErr);
                 }
@@ -255,9 +233,10 @@ function getDevPub(id, data, devPub, callback) {
     });
 }
 
-function getPriceSaleInfo(id, data, callback) {
+function getPriceSaleInfo(data, callback) {
+    console.log(`Getting price and sale info for ${data.steam_id}`);
     const dataObj = data;
-    connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id} AND end_date IS NULL`, (priceErr, priceResults) => {
+    connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${dataObj.steam_id} AND end_date IS NULL`, (priceErr, priceResults) => {
         if (priceErr) {
             return callback(priceErr);
         }
@@ -270,7 +249,7 @@ function getPriceSaleInfo(id, data, callback) {
                 console.log("On sale");
                 // Game is on sale, get sale info
                 console.log(`Querying for sale info`);
-                connection.query(`SELECT * FROM sale_history WHERE app_steam_id = ${id} AND end_date IS NULL`, (saleErr, saleResults) => {
+                connection.query(`SELECT * FROM sale_history WHERE app_steam_id = ${dataObj.steam_id} AND end_date IS NULL`, (saleErr, saleResults) => {
                     if (saleErr) {
                         return callback(saleErr);
                     }

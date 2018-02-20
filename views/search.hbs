@@ -4,19 +4,25 @@
         <title>Search</title>
     </head>
     <body>
+        {{> searchBar}}
         <h1>A search page</h1>
-        {{#each data}}
-        <div class="gameBox">
-            <div class="thumbnail"><img src={{thumbnail}} alt="App thumbnail"></div>
-            <div class="info">
-                <div class="title">
-                    {{title}}
-                </div>
-                <div class="price">
-                    {{> price}}
+        {{#if nothing}}
+        <div class="searchError">{{nothing}}</div>
+        {{/if}}
+        <div id="searchResults">
+            {{#each data}}
+            <div class="gameBox">
+                <div class="thumbnail"><img src={{thumbnail}} alt="App thumbnail"></div>
+                <div class="info">
+                    <div class="title">
+                        {{title}}
+                    </div>
+                    <div class="price">
+                        {{> price}}
+                    </div>
                 </div>
             </div>
+            {{/each}}            
         </div>
-        {{/each}}
     </body>
 </html>
