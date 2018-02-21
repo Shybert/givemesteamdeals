@@ -4,6 +4,8 @@ const hbs = require("hbs");
 const async = require("async");
 const mysql = require("mysql");
 
+const db = require("./modules/db");
+
 // Interesting IDs: 10680
 
 // Setting up basics
@@ -12,19 +14,6 @@ app.set("port", 3000);
 app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, "public")));
 hbs.registerPartials(path.join(__dirname, "views", "partials"));
-
-// Connecting to MySQL
-const connection = mysql.createConnection({
-    user: "root",
-    password: "3oFkAlziyG",
-    database: "gamesdb",
-});
-connection.connect((err) => {
-    if (err) {
-        return console.error(`Error when connecting to MySQL: ${err}`);
-    }
-    console.log("Connected to the MySQL server");
-});
 
 // App page requested
 app.get("/id/:id", (req, res) => {
