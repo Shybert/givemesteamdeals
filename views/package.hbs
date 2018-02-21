@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body id="{{data.steam_id}}">
+        {{> navBar}}
+
+        <div id="packageTitle">
+            <h1>{{data.title}}</h1>
+        </div>
+        <div id="packageInfo">
+            <div id="picture">
+                <img src={{data.thumbnail}} alt="Package image">
+            </div>
+            {{#each includedApps}}
+            <div>{{app_steam_id}}</div>
+            {{/each}}
+        </div>
+        {{> footer}}
+    </body>
+</html>

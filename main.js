@@ -31,21 +31,57 @@ app.get("/id/:id", (req, res) => {
     const id = req.params.id;
     console.log(`\n--- App page with ID #${id} requested ---`);
 
-    async.waterfall([
-        (callback) => {
-            callback(null, id);
-        },
-        genericData,
-        getDevPub,
-        getDevPub,
-    ], (err, data) => {
+    connection.query(`SELECT * FROM package_master WHERE app_steam_id = ${id}`, (err, results) => {
         if (err) {
-            return console.log(err);
+            return console.log(`Error while checking if app is a package: ${err}`);
         }
-        if (data) {
-            console.log(data); // temp
-            console.log("\n");
-            res.render("appPage", data);
+        if (results.length === 0) {
+            console.log(`App is not a package`);
+            async.waterfall([
+                (callback) => {
+                    callback(null, id);
+                },
+                genericData,
+                getDevPub,
+                getDevPub,
+            ], (waterfallErr, data) => {
+                if (waterfallErr) {
+                    return console.log(waterfallErr);
+                }
+                if (data) {
+                    // console.log(data);
+                    console.log("\n");
+                    res.render("appPage", data);
+                }
+            });
+        } else {
+            console.log(`App is a package`);
+            console.log(results);
+            genericData(id, (genericErr, genericId, genericResults) => {
+                if (genericErr) {
+                    return console.log(`Error while getting generic data for package: ${genericErr}`);
+                }
+                if (genericResults) {
+                    console.log(genericResults);
+
+                    // Find IDs of all included apps in package
+                    connection.query(`SELECT * FROM app_package WHERE package_master_package_master_id = 
+                    ${results[0].package_master_id}`, (packageErr, packageResults) => {
+                        if (packageErr) {
+                            return console.log(`Error while getting list off apps in package: ${packageErr}`);
+                        }
+                        if (packageResults) {
+                            console.log(packageResults);
+
+                            // Render the info
+                            const obj = {};
+                            obj.data = genericResults;
+                            obj.includedApps = packageResults;
+                            res.render("package", obj);
+                        }
+                    });
+                }
+            });
         }
     });
 });
@@ -245,11 +281,15 @@ function getDevPub(id, data, devPub, callback) {
                         console.log(`Fetched ${devPub} name`);
                         if (devPub === "developer") {
                             // devPub is developer, so fetch publisher next
-                            dataObj.developers = nameResults[0].name;
+                            dataObj.developers = {};
+                            dataObj.developers.name = nameResults[0].name;
+                            dataObj.developers.id = devPubId;
                             callback(null, id, dataObj, "publisher");
                         } else if (devPub === "publisher") {
                             // devPub is publisher, so finish the waterfall
-                            dataObj.publishers = nameResults[0].name;
+                            dataObj.publishers = {};
+                            dataObj.publishers.name = nameResults[0].name;
+                            dataObj.publishers.id = devPubId;
                             callback(null, dataObj);
                         }
                     }

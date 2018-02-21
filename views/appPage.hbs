@@ -19,9 +19,9 @@
                         <div id="price">
                             {{> price}}
                         </div>
-                        <span id="developers">Developer(s): {{developers}} {{#unless developers}}Not available{{/unless}}</span>
+                        <span id="developers">Developer(s): {{#if developers}}<a href="/company/{{developers.id}}">{{developers.name}}</a>{{/if}} {{#unless developers}}Not available{{/unless}}</span>
                         <br>
-                        <span id="publishers">Publisher(s): {{publishers}} {{#unless publishers}}Not available{{/unless}}</span>
+                        <span id="publishers">Publisher(s): {{#if publishers}}<a href="/company/{{publishers.id}}">{{publishers.name}}</a>{{/if}} {{#unless publishers}}Not available{{/unless}}</span>
                         <br>
                         <span id="releaseDate">Release date: {{release_date}} {{#unless release_date}}Not available{{/unless}}</span>
                     </div>
