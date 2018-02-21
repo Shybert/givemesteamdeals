@@ -3,6 +3,7 @@
     <head>
         <title>{{title}}</title>
     </head>
+    {{> navBar}}
     <body id="{{steam_id}}">
         <div id="appTitle">
             <h1>{{title}}</h1>
@@ -17,18 +18,6 @@
                     <div id="genericInfo">
                         <div id="price">
                             {{> price}}
-                            <!--
-                            {{#if on_sale}}
-                            <div id="discount_percent">{{discount_percent}} %</div>
-                            <div id="priceOnSale">
-                                <span id="beforePrice">$ {{price_history.price}}</span>
-                                <br>
-                                <span id="discountPrice">$ {{sale_history.price}}</span>
-                            </div>
-                            {{else}}
-                            $ {{price_history.price}}
-                            {{/if}}
-                            -->
                         </div>
                         <span id="developers">Developer(s): {{developers}} {{#unless developers}}Not available{{/unless}}</span>
                         <br>
@@ -67,7 +56,7 @@
                             </div>
                         </div>
                         <div id="ratingMetacriticLink">
-                            Metacritic link: {{metacritic_link}} {{#unless metacritic_link}}Not available{{/unless}}
+                            <a href="{{metacritic_link}}">Metacritic {{#unless metacritic_link}}not available{{/unless}}</a>
                         </div>
                     </div>
                 </div>
@@ -79,6 +68,8 @@
                 </div>
             </div>
         </div>
+
+        {{> footer}}
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>

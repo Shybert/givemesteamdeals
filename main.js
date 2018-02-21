@@ -16,7 +16,7 @@ hbs.registerPartials(path.join(__dirname, "views", "partials"));
 // Connecting to MySQL
 const connection = mysql.createConnection({
     user: "root",
-    password: "nSPemHJ5Hc",
+    password: "3oFkAlziyG",
     database: "gamesdb",
 });
 connection.connect((err) => {
@@ -136,7 +136,33 @@ app.get("/pricedata/:id", (req, res) => {
 // Homepage requested
 app.get("/", (req, res) => {
     console.log("\nMain page requested");
-    res.render("index");
+
+    // Getting 16 random deals
+    connection.query(`SELECT * FROM app WHERE on_sale = 1`, (err, results) => {
+        if (err) {
+            return console.log(`Error while getting list of games currently on sale: ${err}`);
+        }
+        if (results) {
+            console.log(`Fetched games currently on sale, randomizing array`);
+            shuffleArray(results, (array) => {
+                console.log(`Randomized array, limiting to 16 and getting price/sale info`);
+                const data = array;
+                data.length = 16;
+
+                async.each(data, getPriceSaleInfo, (priceErr) => {
+                    if (priceErr) {
+                        return console.log(`Error while getting price and sale info for random deals: ${priceErr}`);
+                    }
+                    console.log(`Finished getting price/sale info`);
+                    // console.log(data);
+
+                    const obj = {};
+                    obj.data = results;
+                    res.render("index", obj);
+                });
+            });
+        }
+    });
 });
 
 // No webpages found, 404 error
@@ -272,4 +298,17 @@ function getPriceSaleInfo(data, callback) {
             }
         }
     });
+}
+
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffleArray(array, callback) {
+    const shuffledArray = array;
+    for (let i = shuffledArray.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+
+        if (i === 1) {
+            callback(shuffledArray);
+        }
+    }
 }

@@ -1,0 +1,13 @@
+{{#each data}}
+<div class="gameBox">
+    <div class="thumbnail"><img src={{thumbnail}} alt="App thumbnail"></div>
+    <div class="info">
+        <div class="title">
+            <a href="/id/{{steam_id}}">{{title}}</a>
+        </div>
+        <div class="price">
+            {{> price}}
+        </div>
+    </div>
+</div>
+{{/each}} 
