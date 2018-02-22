@@ -4,7 +4,7 @@ const async = require("async");
 // MySQL connection, usable throughout the app
 const connection = mysql.createConnection({
     user: "root",
-    password: "nSPemHJ5Hc",
+    password: "3oFkAlziyG",
     database: "gamesdb",
 });
 connection.connect((err) => {
@@ -64,6 +64,12 @@ module.exports.getPriceAndSaleInfo = (id, callback) => {
     console.log(`ID#${id}: Getting price and sale information`);
     // Returns an object with the relevant info
     const priceAndSaleInfoObj = {};
+
+    async.parallel({
+        priceHistory: appSteamIdQuery(id, "price_history"),
+    }, (err, data) => {
+        console.log(data);
+    });
 
     // connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id}`, (priceErr, priceResults) => {
     //     if (priceErr) {
