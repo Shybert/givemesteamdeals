@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+const async = require("async");
 
 // MySQL connection, usable throughout the app
 const connection = mysql.createConnection({
@@ -29,9 +30,8 @@ module.exports.getBasicData = (id, callback) => {
 
 module.exports.getDevOrPub = (id, devOrPub, callback) => {
     // Checking if devOrPub is valid
-    if (devOrPub !== "developer" || devOrPub !== "publisher") {
-        Error("Invalid value, should be either 'developer' or 'publisher'");
-        // return callback("ERR: ")
+    if (devOrPub !== "developer" && devOrPub !== "publisher") {
+        return callback(new Error("devOrPub must be either 'developer' or 'publisher'"));
     }
 
     console.log(`ID#${id}: Getting ${devOrPub}`);
@@ -40,7 +40,57 @@ module.exports.getDevOrPub = (id, devOrPub, callback) => {
         if (err) {
             return callback(err);
         }
-        console.log(`ID#${id}: Fetched ${devOrPub} IDs`);
-        return callback(null, results);
+        console.log(`ID#${id}: Fetched ${devOrPub} IDs, finding names`);
+
+        async.concat(results, (item, concatCallback) => {
+            connection.query(`SELECT name FROM company WHERE company_id = ${item.company_company_id}`, (queryErr, queryResults) => {
+                if (queryErr) {
+                    return concatCallback(queryErr);
+                }
+                // Found values successfully, return
+                concatCallback(null, queryResults);
+            });
+        }, (concatErr, concatResults) => {
+            if (concatErr) {
+                return callback(err);
+            }
+            console.log(`Found developer names: ${JSON.stringify(concatResults)}`);
+            callback(null, concatResults);
+        });
     });
 };
+
+module.exports.getPriceAndSaleInfo = (id, callback) => {
+    console.log(`ID#${id}: Getting price and sale information`);
+    // Returns an object with the relevant info
+    const priceAndSaleInfoObj = {};
+
+    // connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id}`, (priceErr, priceResults) => {
+    //     if (priceErr) {
+    //         return callback(priceErr);
+    //     }
+    //     priceAndSaleInfoObj.priceHistory = priceResults;
+    //     console.log(`ID#${id}: Queried for price information, now querying for sale information`);
+
+    //     connection.query(`SELECT * FROM sale_history WHERE app_steam_id = ${id}`, (saleErr, saleResults) => {
+    //         if (saleErr) {
+    //             return callback(saleErr);
+    //         }
+    //         priceAndSaleInfoObj.saleHistory = saleResults;
+    //         console.log(`Queried for sale information`);
+
+    //         callback(null, priceAndSaleInfoObj);
+    //     });
+    // });
+};
+
+// Functions
+// Generic function for querying information from tables where you use 'app_steam_id'
+function appSteamIdQuery(id, table, callback) {
+    connection.query(`SELECT * FROM ${table} WHERE app_steam_id = ${id}`, (err, results) => {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, results);
+    });
+}
