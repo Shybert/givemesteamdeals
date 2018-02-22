@@ -65,11 +65,13 @@ module.exports.getPriceAndSaleInfo = (id, callback) => {
     // Returns an object with the relevant info
     const priceAndSaleInfoObj = {};
 
-    async.parallel({
-        priceHistory: appSteamIdQuery(id, "price_history"),
-    }, (err, data) => {
-        console.log(data);
+    appSteamIdQuery(id, "price_history", (err, data) => {
+        if (err) {
+            return callback(err);
+        }
+        priceAndSaleInfoObj.priceHistory = data;
     });
+    appSteamIdQuery()
 
     // connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id}`, (priceErr, priceResults) => {
     //     if (priceErr) {
@@ -95,7 +97,7 @@ module.exports.getPriceAndSaleInfo = (id, callback) => {
 function appSteamIdQuery(id, table, callback) {
     connection.query(`SELECT * FROM ${table} WHERE app_steam_id = ${id}`, (err, results) => {
         if (err) {
-            return callback(err);
+            callback(err);
         }
         callback(null, results);
     });
