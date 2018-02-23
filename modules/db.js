@@ -1,104 +1,94 @@
-const mysql = require("mysql");
-const async = require("async");
-
-// MySQL connection, usable throughout the app
-const connection = mysql.createConnection({
-    user: "root",
-    password: "3oFkAlziyG",
-    database: "gamesdb",
+const misc = require("../modules/misc");
+const knex = require("knex")({
+    client: "mysql",
+    connection: {
+        user: "root",
+        password: "3oFkAlziyG",
+        database: "gamesdb",
+    },
 });
-connection.connect((err) => {
-    if (err) {
-        return console.error(`Error when connecting to MySQL: ${err}`);
+
+// Specifications:
+// 'a' before name = Array
+// 'o' before name = Object
+
+module.exports.getBasicData = async (id) => {
+    try {
+        console.log(`ID#${id}: Fetching basic data`);
+        const data = await knex.select().from("app").where("steam_id", id);
+        return data;
+    } catch (err) {
+        console.error(`ID#${id}: Error while fetching basic data: ${err}`);
     }
-    console.log("Connected to the MySQL server");
-});
-module.exports.connection = connection;
-
-module.exports.getBasicData = (id, callback) => {
-    console.log(`ID#${id}: Getting basic data`);
-
-    connection.query(`SELECT * FROM app WHERE steam_id = ${id}`, (err, results) => {
-        if (err) {
-            return callback(err);
-        }
-        // Tell about no data found?
-        console.log(`ID#${id}: Found data`);
-        return callback(null, results[0]);
-    });
 };
 
-module.exports.getDevOrPub = (id, devOrPub, callback) => {
-    // Checking if devOrPub is valid
+module.exports.getDevOrPub = async (id, devOrPub) => {
+    // Check if 'devOrPub' is valid
     if (devOrPub !== "developer" && devOrPub !== "publisher") {
-        return callback(new Error("devOrPub must be either 'developer' or 'publisher'"));
+        return console.error(new Error("devOrPub must be either 'developer' or 'publisher'"));
     }
 
-    console.log(`ID#${id}: Getting ${devOrPub}`);
+    try {
+        console.log(`ID#${id}: Fetching ${devOrPub}`);
+        const companyIdArray = await knex.select().from(devOrPub).where("app_steam_id", id);
 
-    connection.query(`SELECT * FROM ${devOrPub} WHERE app_steam_id = ${id}`, (err, results) => {
-        if (err) {
-            return callback(err);
+        const data = [];
+        for (let i = 0; i < companyIdArray.length; i += 1) {
+            data.push((knex.select("name").from("company")
+                .where("company_id", companyIdArray[i].company_company_id)));
         }
-        console.log(`ID#${id}: Fetched ${devOrPub} IDs, finding names`);
 
-        async.concat(results, (item, concatCallback) => {
-            connection.query(`SELECT name FROM company WHERE company_id = ${item.company_company_id}`, (queryErr, queryResults) => {
-                if (queryErr) {
-                    return concatCallback(queryErr);
-                }
-                // Found values successfully, return
-                concatCallback(null, queryResults);
-            });
-        }, (concatErr, concatResults) => {
-            if (concatErr) {
-                return callback(err);
-            }
-            console.log(`Found developer names: ${JSON.stringify(concatResults)}`);
-            callback(null, concatResults);
-        });
-    });
+        return (await Promise.all(data));
+    } catch (err) {
+        console.error(`ID#${id}: Error while fetching dev/pub: ${err}`);
+    }
 };
 
-module.exports.getPriceAndSaleInfo = (id, callback) => {
-    console.log(`ID#${id}: Getting price and sale information`);
-    // Returns an object with the relevant info
-    const priceAndSaleInfoObj = {};
+module.exports.getPriceAndSaleInfo = async (id) => {
+    try {
+        console.log(`ID#${id}: Fetching price and sale info`);
+        const priceArray = await knex.select().from("price_history").where("app_steam_id", id);
+        const saleArray = await knex.select().from("sale_history").where("app_steam_id", id);
 
-    appSteamIdQuery(id, "price_history", (err, data) => {
-        if (err) {
-            return callback(err);
-        }
-        priceAndSaleInfoObj.priceHistory = data;
-    });
-    appSteamIdQuery()
+        const priceAndSaleObj = {};
+        priceAndSaleObj.priceHistory = priceArray;
+        priceAndSaleObj.saleHistory = saleArray;
 
-    // connection.query(`SELECT * FROM price_history WHERE app_steam_id = ${id}`, (priceErr, priceResults) => {
-    //     if (priceErr) {
-    //         return callback(priceErr);
-    //     }
-    //     priceAndSaleInfoObj.priceHistory = priceResults;
-    //     console.log(`ID#${id}: Queried for price information, now querying for sale information`);
-
-    //     connection.query(`SELECT * FROM sale_history WHERE app_steam_id = ${id}`, (saleErr, saleResults) => {
-    //         if (saleErr) {
-    //             return callback(saleErr);
-    //         }
-    //         priceAndSaleInfoObj.saleHistory = saleResults;
-    //         console.log(`Queried for sale information`);
-
-    //         callback(null, priceAndSaleInfoObj);
-    //     });
-    // });
+        return priceAndSaleObj;
+    } catch (err) {
+        console.error(`ID#${id}: Error while fetching price and sale information: ${err}`);
+    }
 };
 
-// Functions
-// Generic function for querying information from tables where you use 'app_steam_id'
-function appSteamIdQuery(id, table, callback) {
-    connection.query(`SELECT * FROM ${table} WHERE app_steam_id = ${id}`, (err, results) => {
-        if (err) {
-            callback(err);
+module.exports.getGamesOnSale = async (limit) => {
+    try {
+        // Check if 'limit' is an integer
+        if (Number.isInteger(limit) !== true) {
+            throw new TypeError("'Limit' must be an integer");
         }
-        callback(null, results);
-    });
-}
+
+        console.log("Getting list of games on sale");
+        const aGamesOnSale = await knex.select().from("app").where("on_sale", 1);
+        const aShuffled = await misc.shuffleArray(aGamesOnSale);
+
+        // Limiting the shuffled array to 'limit', if it is longer
+        if (aShuffled.length > limit) {
+            aShuffled.length = limit;
+        }
+
+        return aShuffled;
+    } catch (err) {
+        console.error(`Error while fetching games currently on sale: ${err}`);
+    }
+};
+
+module.exports.searchDB = async (searchTerm) => {
+    try {
+        console.log(`Searching database with the search term: ${searchTerm}`);
+
+        const aSearchResults = await knex.select().from("app").where("title", "REGEXP", searchTerm);
+        return aSearchResults;
+    } catch (err) {
+        console.error(`Error while searching db: ${err}`);
+    }
+};
