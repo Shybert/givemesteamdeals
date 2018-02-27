@@ -4,7 +4,7 @@ console.log("Requesting price history data for setting up a chart");
 const idPrice = document.getElementsByTagName("body")[0].id;
 console.log(`The ID is: ${idPrice}`);
 $(document).ready(() => {
-    $.get(`/pricedata/${idPrice}`, (data) => {
+    $.get(`/chart/${idPrice}`, (data) => {
         console.log(`Price history data is: ${JSON.stringify(data)}`);
         parsePriceHistoryData(data);
     });

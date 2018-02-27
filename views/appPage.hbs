@@ -19,10 +19,26 @@
                         <div id="price">
                             {{> price}}
                         </div>
-                        <span id="developers">Developer(s): {{#if developers}}<a href="/company/{{developers.id}}">{{developers.name}}</a>{{/if}} {{#unless developers}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="publishers">Publisher(s): {{#if publishers}}<a href="/company/{{publishers.id}}">{{publishers.name}}</a>{{/if}} {{#unless publishers}}Not available{{/unless}}</span>
-                        <br>
+                        <div id="developers">
+                            {{#if developers}}
+                                <span>Developer(s):</span>
+                            {{#each developers}}
+                                <span class="devPubName">{{name}}</span>
+                            {{/each}}
+                            {{else}}
+                                <span class="notAvailable">Not available</span>
+                            {{/if}}
+                        </div>
+                        <div id="publishers">
+                            {{#if publishers}}
+                                <span>Publisher(s):</span>
+                            {{#each publishers}}
+                                <span class="devPubName">{{name}}</span>
+                            {{/each}}
+                            {{else}}
+                                <span class="notAvailable">Not available</span>
+                            {{/if}}
+                        </div>
                         <span id="releaseDate">Release date: {{release_date}} {{#unless release_date}}Not available{{/unless}}</span>
                     </div>
 
@@ -56,7 +72,11 @@
                             </div>
                         </div>
                         <div id="ratingMetacriticLink">
-                            <a href="{{metacritic_link}}">Metacritic {{#unless metacritic_link}}not available{{/unless}}</a>
+                            {{#if metacritic_link}}
+                            <a href="{{metacritic_link}}">Metacritic link</a>
+                            {{else}}
+                            <span>Metacritic link not available</span>
+                            {{/if}}
                         </div>
                     </div>
                 </div>
@@ -75,6 +95,5 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
         <script src="/js/textInDonutChart.js"></script>
         <script src="/js/ratingChart.js"></script>
-        <script src="/js/priceHistoryChart.js"></script>
     </body>
 </html>

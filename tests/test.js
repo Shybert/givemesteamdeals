@@ -1,4 +1,4 @@
-const db = require("../modules/db2");
+const db = require("../modules/db");
 const misc = require("../modules/misc");
 
 // db.getBasicData(10).then((data) => {
@@ -22,6 +22,23 @@ const misc = require("../modules/misc");
 //     console.log(data);
 // });
 
-db.searchDB("dark souls").then((data) => {
+// db.searchDB("dark souls").then((data) => {
     
-});
+// });
+
+// db.getIdOfGamesOnSale(16);
+
+// temp();
+
+// async function temp() {
+//     const o = await db.getGamesOnSale(16);
+
+//     const aPriceBoxInfo = [];
+//     o.forEach((element) => {
+//         aPriceBoxInfo.push(db.getPriceBoxInfo(element.steam_id, element));
+//     });
+
+//     console.log(await Promise.all(aPriceBoxInfo));
+// }
+
+db.getChartData(10);

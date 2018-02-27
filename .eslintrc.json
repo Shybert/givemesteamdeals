@@ -1,7 +1,7 @@
 {
     "extends": "airbnb-base",
     "rules": {
-        "quotes": ["off", "double"],
+        "quotes": ["error", "double"],
         "indent": ["error", 4],
         "linebreak-style": ["error", "windows"],
         "no-console": ["off"],
