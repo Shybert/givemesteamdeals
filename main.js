@@ -30,7 +30,7 @@ app.get("/id/:id", async (req, res) => {
 // Search page requested
 app.get("/search", async (req, res) => {
     const searchQuery = req.query.query;
-    console.log(`Search page requested, query: ${searchQuery}`);
+    console.log(`\nSearch page requested, query: ${searchQuery}`);
 
     const aSearchResults = await db.searchDB(searchQuery);
     console.log("Fetched searched for games, getting price box info");
@@ -48,10 +48,15 @@ app.get("/search", async (req, res) => {
     res.render("index", obj);
 });
 
+app.get("/company/:id", async (req, res) => {
+    const id = req.params.id;
+    console.log(`\nCompany page requested, ID: ${id}`);
+});
+
 app.get("/api/chart/:id", async (req, res) => {
     const id = req.params.id;
-
     console.log(`\nChart data requested for ID: ${id}`);
+
     const oChartData = await db.getChartData(id);
 
     console.log("Sending chart data");
