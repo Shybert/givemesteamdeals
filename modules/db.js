@@ -6,6 +6,8 @@ const knex = require("knex")({
         password: "nSPemHJ5Hc",
         database: "gamesdb",
     },
+    useNullAsDefault: true,
+    acquireConnectionTimeout: 60000000,
 });
 
 // Specifications:

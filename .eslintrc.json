@@ -7,7 +7,8 @@
         "no-console": ["off"],
         "no-use-before-define": ["error", {"functions": false}],
         "prefer-destructuring": ["off"],
-        "consistent-return": ["off"]
+        "consistent-return": ["off"],
+        "no-await-in-loop": ["off"]
     },
     "env": {
         "browser": true,

@@ -1,5 +1,8 @@
 // Contains miscellanous functions used througout the app
 
+const htmlparser = require("htmlparser2");
+const rp = require("request-promise");
+
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 module.exports.shuffleArray = async (array) => {
     try {
@@ -24,4 +27,10 @@ module.exports.log = async (id, message) => {
     } catch (err) {
         console.error(`Error with custom log function: ${err}`);
     }
+};
+
+// Fetch a picture from steam
+module.exports.getSteamPicture = async (id, obj) => {
+    const sSteamLink = await rp(`http://store.steampowered.com/app/${id}`);
+    console.log(sSteamLink);
 };
