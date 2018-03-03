@@ -2,6 +2,7 @@
 
 const htmlparser = require("htmlparser2");
 const rp = require("request-promise");
+const tough = require("tough-cookie");
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 module.exports.shuffleArray = async (array) => {
@@ -29,8 +30,42 @@ module.exports.log = async (id, message) => {
     }
 };
 
-// Fetch a picture from steam
-module.exports.getSteamPicture = async (id, obj) => {
-    const sSteamLink = await rp(`http://store.steampowered.com/app/${id}`);
-    console.log(sSteamLink);
-};
+// // Fetch a picture from steam
+// module.exports.getSteamPicture = async (id, obj) => {
+//     try {
+//         const cookie = new tough.Cookie({
+//             birthtime: "283993201",
+//             mature_content: "1",
+//         });
+
+//         const cookiejar = rp.jar();
+//         cookiejar.setCookie(cookie, `http://store.steampowered.com/app/${id}`);
+
+//         const oSteamLink = {
+//             uri: `http://store.steampowered.com/app/${id}`,
+//             jar: cookiejar,
+//         };
+
+//         // console.log("Fetching Steam picture, getting HTML");
+//         // const oSteamLink = {
+//         //     uri: `http://store.steampowered.com/app/${id}`,
+//         //     jar: new tough.Cookie({birthtime: "283993201", mature_content: "1"})
+//         // }
+//         const sSteamLink = await rp(oSteamLink);
+//         console.log(sSteamLink);
+
+//         const parser = new htmlparser.Parser({
+//             onopentag: (name, attribs) => {
+//                 if (attribs.class === "screenshot_holder") {
+//                     console.log(attribs);
+//                 }
+//             },
+//         });
+//         console.log("Parsing HTML");
+//         parser.write(sSteamLink);
+//         // parser.end();
+//     } catch (err) {
+//         console.error(`Error while getting steam picture: ${err}`);
+//     }
+    
+// };

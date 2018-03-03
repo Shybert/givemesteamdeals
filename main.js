@@ -51,6 +51,11 @@ app.get("/search", async (req, res) => {
 app.get("/company/:id", async (req, res) => {
     const id = req.params.id;
     console.log(`\nCompany page requested, ID: ${id}`);
+
+    const oCompanyData = await db.getCompanyData(id);
+
+    console.log("Company data fetched, rendering company page");
+    res.render("company", oCompanyData);
 });
 
 app.get("/api/chart/:id", async (req, res) => {
@@ -61,6 +66,31 @@ app.get("/api/chart/:id", async (req, res) => {
 
     console.log("Sending chart data");
     res.send(oChartData);
+});
+
+app.get("/companyedit/:id", async (req, res) => {
+    const id = req.params.id;
+    console.log(`\nCompany data edit request for ID: ${id}`);
+
+    console.log("Putting query parameters into an object");
+    console.log(`Query params: ${JSON.stringify(req.query)}`);
+    const oEditData = {};
+    oEditData.text = req.query.text;
+    if (req.query.foundingYear === "Not available") {
+        oEditData.foundingYear = null;
+    } else {
+        oEditData.foundingYear = req.query.foundingYear;
+    }
+    if (req.query.logo === "Not available") {
+        oEditData.logo = null;
+    } else {
+        oEditData.logo = req.query.logo;
+    }
+
+    await db.insertCompanyData(id, oEditData);
+
+    console.log("Redirecting to company");
+    res.redirect(`/company/${id}`);
 });
 
 // Homepage requested
@@ -92,6 +122,6 @@ app.use(async (req, res) => {
     res.render("404");
 });
 
-app.listen(app.get("port"), async () => {
+app.listen(app.get("port"), "209.250.245.11", async () => {
     console.log(`Started server, listening on port ${app.get("port")}`);
 });

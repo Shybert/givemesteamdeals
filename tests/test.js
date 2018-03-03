@@ -41,4 +41,6 @@ const misc = require("../modules/misc");
 //     console.log(await Promise.all(aPriceBoxInfo));
 // }
 
-db.getChartData(10);
+// db.getChartData(10);
+
+db.getCompanyData(303);

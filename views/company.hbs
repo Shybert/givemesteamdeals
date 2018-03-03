@@ -1,9 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        
+        <title>{{name}}</title>
     </head>
-    <body>
-        
+    <body id="{{company_id}}">
+        <div id="overlay">
+            <form action="/companyedit/{{company_id}}" target="_self">
+                <input type="text" name="foundingYear" maxlength="4" value="{{founding_year}}{{#unless founding_year}}Not available{{/unless}}">
+                <input type="text" name="logo" maxlength="255" value="{{logo}}{{#unless logo}}Not available{{/unless}}">
+                <textarea name="text" maxlength="20000">{{text}}</textarea>
+                <input type="submit" value="Submit">
+            </form>
+            
+        </div>
+
+        <div id="companyTitle">
+            {{name}}
+        </div>
+        <div id="logo">
+            <img href={{logo}} alt="Logo image couldn't load">
+            {{#unless logo}}<span class="unavailable">Logo not available :(</span>{{/unless}}
+        </div>
+        <div id="foundingYear">
+            {{founding_year}}
+            {{#unless founding_year}}<span class="unavailable">Founding year not available :(</span>{{/unless}}
+        </div>
+        <div id="text">
+            {{text}}
+            {{#unless text}}<span class="unavailable">Description not available :(</span>{{/unless}}
+        </div>
+        <button id="editButton">Edit</button>
+
+        <script src="/js/edit.js"></script>
     </body>
 </html>

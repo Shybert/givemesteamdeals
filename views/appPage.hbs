@@ -23,7 +23,7 @@
                             {{#if developers}}
                                 <span>Developer(s):</span>
                             {{#each developers}}
-                                <span class="devPubName">{{name}}</span>
+                                <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
                             {{/each}}
                             {{else}}
                                 <span class="notAvailable">Not available</span>
@@ -33,7 +33,7 @@
                             {{#if publishers}}
                                 <span>Publisher(s):</span>
                             {{#each publishers}}
-                                <span class="devPubName">{{name}}</span>
+                                <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
                             {{/each}}
                             {{else}}
                                 <span class="notAvailable">Not available</span>

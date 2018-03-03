@@ -40,8 +40,9 @@ module.exports.getDevOrPub = async (id, devOrPub) => {
         misc.log(id, `Fetching ${devOrPub} names`);
         const data = [];
         for (let i = 0; i < companyIdArray.length; i += 1) {
-            data.push((knex.select("name").from("company")
+            data.push(await (knex.select("name").from("company")
                 .where("company_id", companyIdArray[i].company_company_id)));
+            data[i][0].id = companyIdArray[i].company_company_id;
         }
 
         return (await Promise.all(data));
@@ -119,6 +120,14 @@ module.exports.getChartData = async (id) => {
     }
 };
 
+module.exports.getCompanyData = async (id) => {
+    misc.log(id, "Fetching company data");
+    const oCompanyData = (await knex.select().from("company").where("company_id", id))[0];
+
+    misc.log(id, "Fetched company data");
+    return oCompanyData;
+};
+
 module.exports.convertDataForAppPageDisplay = async (obj) => {
     try {
         const oConverted = obj;
@@ -167,6 +176,22 @@ module.exports.searchDB = async (searchTerm) => {
         return aSearchResults;
     } catch (err) {
         console.error(`Error while searching db: ${err}`);
+    }
+};
+
+module.exports.insertCompanyData = async (id, obj) => {
+    try {
+        misc.log(id, "Updating company data");
+        await knex("company").where("company_id", id).update(({
+            text: obj.text,
+            founding_year: obj.foundingYear,
+            logo: obj.logo,
+        }));
+
+        misc.log(id, "Company date updated");
+        return null;
+    } catch (err) {
+        console.error(`Error while updating company data: ${err}`);
     }
 };
 
