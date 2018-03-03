@@ -123,5 +123,5 @@ app.use(async (req, res) => {
 });
 
 app.listen(app.get("port"), "209.250.245.11", async () => {
-    console.log(`Started server, listening on port ${app.get("port")}`);
+     console.log(`Started server, listening on port ${app.get("port")}`);
 });
