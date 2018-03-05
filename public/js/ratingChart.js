@@ -98,7 +98,7 @@ function makePriceHistoryChart(data, highestPrice) {
             labels: data.priceHistory.labels,
             datasets: [{
                 label: "Price",
-                backgroundColor: "#748023",
+                backgroundColor: "#388E3C",
                 lineTension: 0,
                 data: data.priceHistory.data,
             }],

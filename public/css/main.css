@@ -1,3 +1,138 @@
-h1 {
-    color: black;
+body {
+    font-family: "Helvetica", "Arial", sans-serif;
+    line-height: 1.5;
+    margin: 0;
+    color: #555;
+}
+h1, h2, strong {
+    color: #333;
+}
+h2 {
+    margin-top: 1em;
+    padding-top: 1em;
+}
+
+#content {
+    margin: 0 auto;
+    max-width: 58em;
+}
+
+/* Game box related tags */
+.gameBox {
+    width: 12.5em;
+    margin: 1em 1em 1em 1em;
+    float: left;
+    box-shadow: 0 0 1em #111;
+}
+.gameBox .title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+}
+.gameBox .thumbnail {
+    border-top: none;
+}
+.gameBox .thumbnail img {
+    display: block;
+    margin: auto;
+    width: 100%;
+}
+
+.price {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: none;
+    padding: 0.5em;
+}
+.priceOnSale {
+    width: 5em;
+    background-color: #222;
+    max-height: 3.125em;
+    text-align: center;
+}
+.beforePrice {
+    text-decoration: line-through;
+}
+.afterPrice {
+    font-size: 125%;
+    color: #aaa;
+}
+.discountPercentDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5em;
+    background-color: #4c6b22;
+    color: #a4d007;
+    text-align: center;
+    max-height: 3.125em;
+    line-height: 3.125;
+}
+.discountPercent {
+    font-size: 1.75em;
+}
+
+/* App page */
+#rating {
+    width: 60%;
+    float: right;
+}
+#ratingChart {
+    margin-bottom: 0.5em;
+}
+#ratingInfo {
+    margin-top: 0.5em;
+}
+#ratingText {
+    display: flex;
+    justify-content: center;
+}
+#ratingPosNegDiv {
+    display: flex;
+    justify-content: center;
+}
+.ratingPosNeg {
+    margin: 0 0.5em;
+}
+
+#genericInfo {
+    width: 40%;
+    float: left;
+}
+#steamSpyInfo {
+    display: none;
+}
+
+/* Nav bar */
+nav {
+    background-color: #388E3C;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+nav form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 3em;
+    max-height: 3em;
+}
+nav form #searchBar {
+    min-height: 2.25em;
+    min-width: 30em;
+    text-indent: 2em;
+}
+nav form .fa-search {
+    position: relative;
+    left: 1.5em;
+}
+
+nav #navLogo img {
+    display: block;
+    max-width: 12.5em;
+    position: absolute;
+    left: 1em;
+    top: 1.5em;
 }

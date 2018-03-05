@@ -2,82 +2,77 @@
 <html>
     <head>
         <title>{{title}}</title>
+        <link rel="stylesheet" type="text/css" href="/css/main.css">
     </head>
     {{> navBar}}
     <body id="{{steam_id}}">
         <div id="appTitle">
             <h1>{{title}}</h1>
         </div>
-        <div id="appInfo">
-            <div id="basics">
-                <div id="picture">
-                    <img src={{thumbnail}} alt="App image">
+        <div id="content">
+            <div id="info">
+                <div id="genericInfo">
+                    <div id="price">
+                        {{> price}}
+                    </div>
+                    <div id="developers">
+                        {{#if developers}}
+                            <span>Developer(s):</span>
+                        {{#each developers}}
+                            <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
+                        {{/each}}
+                        {{else}}
+                            <span class="notAvailable">Not available</span>
+                        {{/if}}
+                    </div>
+                    <div id="publishers">
+                        {{#if publishers}}
+                            <span>Publisher(s):</span>
+                        {{#each publishers}}
+                            <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
+                        {{/each}}
+                        {{else}}
+                            <span class="notAvailable">Not available</span>
+                        {{/if}}
+                    </div>
+                    <span id="releaseDate">Release date: {{release_date}} {{#unless release_date}}Not available{{/unless}}</span>
                 </div>
 
-                <div id="info">
-                    <div id="genericInfo">
-                        <div id="price">
-                            {{> price}}
-                        </div>
-                        <div id="developers">
-                            {{#if developers}}
-                                <span>Developer(s):</span>
-                            {{#each developers}}
-                                <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
-                            {{/each}}
-                            {{else}}
-                                <span class="notAvailable">Not available</span>
-                            {{/if}}
-                        </div>
-                        <div id="publishers">
-                            {{#if publishers}}
-                                <span>Publisher(s):</span>
-                            {{#each publishers}}
-                                <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
-                            {{/each}}
-                            {{else}}
-                                <span class="notAvailable">Not available</span>
-                            {{/if}}
-                        </div>
-                        <span id="releaseDate">Release date: {{release_date}} {{#unless release_date}}Not available{{/unless}}</span>
-                    </div>
+                <div id="steamSpyInfo">
+                    <span id="owners">Owners: {{owners}} {{#unless owners}}Not available{{/unless}}</span>
+                    <br>
+                    <span id="playersForever">Total players: {{players_forever}} {{#unless players_forever}}Not available{{/unless}}</span>
+                    <br>
+                    <span id="players2Weeks">Players in the last 2 weeks: {{players_2weeks}} {{#unless players_2weeks}}Not available{{/unless}}</span>
+                    <br>
+                    <span id="averageForever">Average players: {{average_forever}} {{#unless average_forever}}Not available{{/unless}}</span>
+                    <br>
+                    <span id="average2Weeks">Average players in the last 2 weeks: {{average_2weeks}} {{#unless average_2weeks}}Not available{{/unless}}</span>
+                    <br>
+                    <span id="medianForever">Median players: {{median_forever}} {{#unless median_forever}}Not available{{/unless}}</span>
+                    <br>
+                    <span id="median2Weeks">Median players in the last 2 weeks: {{median_2weeks}} {{#unless median_2weeks}}Not available{{/unless}}</span>
+                </div>
 
-                    <div id="steamSpyInfo">
-                        <span id="owners">Owners: {{owners}} {{#unless owners}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="playersForever">Total players: {{players_forever}} {{#unless players_forever}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="players2Weeks">Players in the last 2 weeks: {{players_2weeks}} {{#unless players_2weeks}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="averageForever">Average players: {{average_forever}} {{#unless average_forever}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="average2Weeks">Average players in the last 2 weeks: {{average_2weeks}} {{#unless average_2weeks}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="medianForever">Median players: {{median_forever}} {{#unless median_forever}}Not available{{/unless}}</span>
-                        <br>
-                        <span id="median2Weeks">Median players in the last 2 weeks: {{median_2weeks}} {{#unless median_2weeks}}Not available{{/unless}}</span>
+                <div id="rating">
+                    <div id="ratingChart">
+                        <canvas id="ratingCanvas"></canvas>
                     </div>
-
                     <div id="ratingInfo">
-                        <div id="ratingChart">
-                            <canvas id="ratingCanvas"></canvas>
+                        <div id="ratingText">
+                            Rating text: {{steam_rating_text}} {{#unless steam_rating_text}}Not available{{/unless}}
                         </div>
-                        <div id="ratingInfo">
-                            <div id="ratingText">
-                                Rating text: {{steam_rating_text}} {{#unless steam_rating_text}}Not available{{/unless}}
-                            </div>
-                            <div id="ratingPosNeg">
-                                <span id="ratingPositive">Positive: {{steam_rating_positive}} {{#unless steam_rating_positive}}Not available{{/unless}}</span>
-                                <span id="ratingNegative">Negative: {{steam_rating_negative}} {{#unless steam_rating_negative}}Not available{{/unless}}</span>
-                            </div>
+                        <div id="ratingPosNegDiv">
+                            <div id="ratingPositive" class="ratingPosNeg">Positive: {{steam_rating_positive}} {{#unless steam_rating_positive}}Not available{{/unless}}</div>
+                            <div id="ratingNegative" class="ratingPosNeg">Negative: {{steam_rating_negative}} {{#unless steam_rating_negative}}Not available{{/unless}}</div>
                         </div>
-                        <div id="ratingMetacriticLink">
-                            {{#if metacritic_link}}
-                            <a href="{{metacritic_link}}">Metacritic link</a>
-                            {{else}}
-                            <span>Metacritic link not available</span>
-                            {{/if}}
-                        </div>
+                    </div>
+                    <div id="ratingMetacriticLink">
+                        {{#if metacritic_link}}
+                        <a href="{{metacritic_link}}">Metacritic link</a>
+                        {{else}}
+                        <span>Metacritic link not available</span>
+                        {{/if}}
                     </div>
                 </div>
 
