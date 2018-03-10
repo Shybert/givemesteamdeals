@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Search page</title>
+        <title>Search query: "{{searchQuery}}"</title>
+        {{> defaultHead}}
     </head>
     <body>
         {{> navBar}}
 
-        <h1>A search page</h1>
+
         {{#if nothing}}
         <div class="searchError">{{nothing}}</div>
         {{/if}}
-        <div id="searchResults">
-            {{> priceBox}}
+        <div id="content">
+            <h1>Search query: "{{searchQuery}}"</h1>
+            <ul id="gameList">
+                {{> priceBox}} 
+            </ul>
         </div>
         
         {{> footer}}

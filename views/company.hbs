@@ -2,34 +2,57 @@
 <html>
     <head>
         <title>{{name}}</title>
+        {{> defaultHead}}
     </head>
     <body id="{{company_id}}">
-        <div id="overlay">
-            <form action="/companyedit/{{company_id}}" target="_self">
-                <input type="text" name="foundingYear" maxlength="4" value="{{founding_year}}{{#unless founding_year}}Not available{{/unless}}">
-                <input type="text" name="logo" maxlength="255" value="{{logo}}{{#unless logo}}Not available{{/unless}}">
-                <textarea name="text" maxlength="20000">{{text}}</textarea>
-                <input type="submit" value="Submit">
-            </form>
-            
+        <div id="overlayWrapper">
+            <div id="overlay">
+                <a href="javascript:void(0)" id="closeButton">Close</a>
+
+                <form action="/companyedit/{{company_id}}" target="_self" id="companyInput">
+                    <h3>Founding year:</h3>
+                    <input type="text" name="foundingYear" maxlength="4" placeholder="Input a founding year here" size="30" class="normalInput">
+                    <h3>Logo link:</h3>
+                    <input type="text" name="logo" maxlength="255" placeholder="Input a link to a logo here" size="5" class="normalInput">
+                    <h3>Description:</h3>
+                    <textarea name="text" maxlength="20000"  rows="10" cols="30" placeholder="Input a description here">{{text}}</textarea>
+                    <br>
+                    <input type="submit" value="Submit changes!" id="submitCompanyButton" class="buttonGreen">
+                </form>                
+            </div>
         </div>
 
-        <div id="companyTitle">
-            {{name}}
+        {{> navBar}}
+
+        <div id="content">
+            <h1>{{name}}</h1>
+            <div id="companyLogo">
+                {{#if logo}}
+                <img src={{logo}} alt="Logo image couldn't load">
+                {{else}}
+                Logo not available :(
+                {{/if}}
+            </div>
+            <div id="foundingYear">
+                {{#if founding_year}}
+                Founded in: {{founding_year}}
+                {{else}}
+                Founding year not available :(
+                {{/if}}
+            </div>
+            <div id="companyText">
+                {{#if text}}
+{{text}}
+                {{else}}
+Description not available :(</span>
+                {{/if}}
+            </div>
+            <div id="editButtonWrapper">
+                <button id="editButton" class="buttonGreen">Edit</button>
+            </div>
         </div>
-        <div id="logo">
-            <img href={{logo}} alt="Logo image couldn't load">
-            {{#unless logo}}<span class="unavailable">Logo not available :(</span>{{/unless}}
-        </div>
-        <div id="foundingYear">
-            {{founding_year}}
-            {{#unless founding_year}}<span class="unavailable">Founding year not available :(</span>{{/unless}}
-        </div>
-        <div id="text">
-            {{text}}
-            {{#unless text}}<span class="unavailable">Description not available :(</span>{{/unless}}
-        </div>
-        <button id="editButton">Edit</button>
+        
+        {{> footer}}
 
         <script src="/js/edit.js"></script>
     </body>

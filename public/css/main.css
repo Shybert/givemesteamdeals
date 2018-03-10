@@ -11,23 +11,76 @@ h2 {
     margin-top: 1em;
     padding-top: 1em;
 }
+a {
+    color: #388E3C;
+    text-decoration: underline;
+}
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+}
+.buttonGreen {
+    border-radius: 5px;
+    padding: 0.5em;
+    display: block;
+    background: #4CAF50;
+    border: none;
+    box-shadow: 0 2px 0 #3f6f21;
+    color: white;
+    margin: 1em auto;
+}
+.buttonGreen:hover {
+    cursor: pointer;
+    background-color: #388E3C;    
+}
 
 #content {
     margin: 0 auto;
     max-width: 58em;
 }
+#content h1 {
+    text-align: center;
+    border-bottom: 1px solid #cacaca
+}
+
+#gameList {
+    text-align: center;
+    padding-top: 0.5em;
+}
+
+/* Index */
+#indexBackground {
+    height: 50vh;
+    width: 100%;
+}
+#indexLogo {
+}
 
 /* Game box related tags */
+ul#gameList {
+    list-style-type: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0;
+}
+ul#gameList li a {
+    text-decoration: none;
+}
 .gameBox {
     width: 12.5em;
     margin: 1em 1em 1em 1em;
-    float: left;
-    box-shadow: 0 0 1em #111;
+    box-shadow: 0 0 0.1em #333;
+    color: #555;
+    border: 1px solid #cacaca;
+    box-sizing: border-box;
 }
 .gameBox .title {
     white-space: nowrap;
     overflow: hidden;
     text-align: center;
+    text-overflow: ellipsis;
+    padding: 0.5em;
 }
 .gameBox .thumbnail {
     border-top: none;
@@ -37,50 +90,98 @@ h2 {
     margin: auto;
     width: 100%;
 }
+.gameBox .title, .gameBox .thumbnail {
+    border-bottom: 1px solid #cacaca;
+}
 
 .price {
     width: 100%;
+    padding: 0.5em;
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: none;
-    padding: 0.5em;
 }
-.priceOnSale {
+#priceInfo {
+    display: flex;
+}
+.normalPriceParent, .priceOnSale {
     width: 5em;
     background-color: #222;
-    max-height: 3.125em;
+    height: 3.125em;
     text-align: center;
 }
 .beforePrice {
+    font-size: 90%;
     text-decoration: line-through;
 }
 .afterPrice {
     font-size: 125%;
     color: #aaa;
 }
+.normalPriceParent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.25em;
+    box-sizing: border-box;
+}
+.normalPrice {
+    font-size: 110%;
+    color: #aaa;
+}
 .discountPercentDiv {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 3.125em;
+    box-sizing: border-box;
     width: 5em;
-    background-color: #4c6b22;
-    color: #a4d007;
+    background-color: #388E3C;
+    color: #CDDC39;
     text-align: center;
-    max-height: 3.125em;
-    line-height: 3.125;
 }
 .discountPercent {
-    font-size: 1.75em;
+    font-size: 175%;
 }
 
 /* App page */
+#info {
+    margin: 1.5em;
+}
+#appTitle {
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+.appPageInfoTitle {
+    padding: 0.25em 0;
+    margin: 0;
+    background-color: #388E3C;
+    color: white;
+    text-align: center;
+}
+#rating, #genericInfo, #priceCharts {
+    border: 2px solid #cacaca;
+    box-sizing: border-box;
+}
+
+#priceInfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.75em;
+}
+
+#genericInfoRatingWrapper {
+    display: flex;
+}
 #rating {
-    width: 60%;
-    float: right;
+    flex: 0 0 60%;
+    border-left-width: 1px;
+    padding-bottom: 0.5em;
 }
 #ratingChart {
-    margin-bottom: 0.5em;
+    margin: 0.5em 0;
 }
 #ratingInfo {
     margin-top: 0.5em;
@@ -96,13 +197,153 @@ h2 {
 .ratingPosNeg {
     margin: 0 0.5em;
 }
+.ratingPositive {
+    color: #0094ea;
+}
+.ratingNegative {
+    color: #e34600;
+}
+.ratingMixed {
+    color: #ffa300;
+}
+#ratingMetacriticLink {
+    text-align: center;
+}
 
 #genericInfo {
-    width: 40%;
-    float: left;
+    flex: 0 0 40%;
+    border-right-width: 1px;
 }
-#steamSpyInfo {
+#genericInfo ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#genericInfo ul .active {
+    background-color: #388E3C;
+    color: white;
+}
+#genericInfo ul li {
+    width: 50%;
+    height: 3em;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+.tabContent {
+    padding: 0.5em 1em 1em 1em;
+}
+#tab-2 {
     display: none;
+}
+#trackButton, #submitTrackButton {
+    min-width: 10em;
+}
+#trackInput h3 {
+    margin-bottom: 0.5em;
+}
+#trackInput .trackInfo {
+    margin: 0;
+    padding: 0;
+}
+#trackInput img {
+    border: 2px solid #cacaca;
+    margin-top: 0.25em;
+    width: 10em;
+}
+#trackInput #trackPriceH3 {
+    margin-top: 0.5em;
+}
+
+#priceCharts {
+    clear: both;
+}
+#priceHistory {
+    margin: 0.5em 0.75em;
+}
+
+/* Company page */
+#overlayWrapper {
+    height: 0;
+    width: 100%;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow-y: scroll;
+    transition: 0.2s;
+    text-align: center;
+}
+#overlay {
+    display: inline-block;
+    background-color: white;
+    min-width: 20em;
+    padding: 1em;
+    margin: 1em;
+}
+#overlay, .normalInput {
+    border: 2px solid #bbb;
+    border-radius: 5px;
+}
+#companyInput h3 {
+    padding: 0.5em;
+    margin: 0;
+}
+.normalInput {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1em 0.5em;
+    background-color: #edeff0;
+}
+/* #companyInput #submitCompanyButton, #editButton {
+    background: #4CAF50;
+    border: none;
+    box-shadow: 0 2px 0 #3f6f21;
+    color: white;
+    margin-top: 1em;
+}
+#companyInput #submitCompanyButton:hover, #editButton:hover {
+    cursor: pointer;
+    background-color: #388E3C;
+} */
+#companyLogo {
+    max-width: 20em;
+    display: block;
+    margin: 1em auto;
+    text-align: center;
+}
+#companyLogo img {
+    max-width: 20em;
+}
+#foundingYear, #companyText {
+    text-align: center;
+}
+#foundingYear {
+    border-bottom: 2px solid #cacaca;
+    padding-bottom: 1em;
+}
+#companyText {
+    padding-top: 1em;
+    white-space: pre-wrap;
+}
+#submitCompanyButton {
+    min-width: 15em;
+}
+#editButtonWrapper {
+    margin-top: 1em;    
+}
+#editButton {
+    min-width: 10em;
+}
+
+/* About page */
+#about {
+    margin: 1em;
 }
 
 /* Nav bar */
@@ -110,7 +351,8 @@ nav {
     background-color: #388E3C;
     position: sticky;
     top: 0;
-    z-index: 10;
+    left: 0;
+    z-index: 1;
 }
 nav form {
     display: flex;
@@ -135,4 +377,40 @@ nav #navLogo img {
     position: absolute;
     left: 1em;
     top: 1.5em;
+}
+#searchBar {
+    border: 2px solid #bbb;
+    border-radius: 5px;
+}
+
+/* Footer */
+footer {
+    margin-top: 2em;
+    padding: 1em;
+    border-top: 2px solid #cacaca;
+    text-align: center;
+}
+
+/* Small screen overrides */
+@media (max-width: 600px) {
+    nav form #searchBar {
+        min-width: 90%;
+    }
+    nav #navLogo {
+        display: none;
+    }
+
+    #genericInfoRatingWrapper {
+        display: block;
+    }
+}
+@media (max-width: 400px) {
+    #overlay {
+        width: 300px;
+    }
+}
+@media (max-width: 25em) {
+    #companyLogo img {
+        max-width: 90%;
+    }
 }

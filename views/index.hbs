@@ -2,22 +2,21 @@
 <html>
     <head>
         <title>givemesteamdeals</title>
-        <link rel="stylesheet" type="text/css" href="/css/main.css">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+        {{> defaultHead}}
     </head>
     <body>
-        <img src="/pics/tempthumbnailsbackground.png" style="width: 80px; height: 80px;">
-        <img src="/pics/tempgivemesteamdeals.png" style="width: 240px; height: 80px;" alt="Give Me Steam Deals Logo">
+        <div id="indexTop">
+            <img src="/pics/tempthumbnailsbackground.png" id="indexBackground">
+            <img src="/pics/tempgivemesteamdeals.png" alt="Give Me Steam Deals Logo" id="indexLogo">            
+        </div>
 
         {{> navBar}}
 
         <div id="content">
-            <h2>Randomly selected deals!</h2>
-
-            <div id="gameList">
+            <h1>Randomly selected deals!</h1>
+            <ul id="gameList">
                 {{> priceBox}}
-            </div>
+            </ul>
         </div>
 
         {{> footer}}

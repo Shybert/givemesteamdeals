@@ -1,6 +1,8 @@
 const express = require("express");
 const hbs = require("hbs");
 const path = require("path");
+
+const misc = require("./modules/misc");
 const db = require("./modules/db");
 
 // Interesting IDs: 10680
@@ -23,6 +25,14 @@ app.get("/id/:id", async (req, res) => {
     oGameData = await db.getPriceBoxInfo(id, oGameData);
     oGameData = await db.convertDataForAppPageDisplay(oGameData);
 
+    misc.log(id, "Checking Steam rating");
+    oGameData.ratingStatus = "ratingMixed";
+    if (oGameData.steam_rating_percent >= 70) {
+        oGameData.ratingStatus = "ratingPositive";
+    } else if (oGameData.steam_rating_percent <= 39) {
+        oGameData.ratingStatus = "ratingNegative";
+    }
+
     console.log("All info found, rendering app page");
     res.render("appPage", oGameData);
 });
@@ -43,9 +53,10 @@ app.get("/search", async (req, res) => {
     // Putting the data into an object for Handlebars
     const obj = {};
     obj.data = await Promise.all(aPriceBoxInfo);
+    obj.searchQuery = searchQuery;
 
     console.log("All price box info found, rendering search page");
-    res.render("index", obj);
+    res.render("search", obj);
 });
 
 app.get("/company/:id", async (req, res) => {
@@ -65,9 +76,27 @@ app.get("/api/chart/:id", async (req, res) => {
     const oChartData = await db.getChartData(id);
 
     console.log("Sending chart data");
+    console.log(oChartData);
     res.send(oChartData);
 });
 
+// Price track requested
+app.get("/track/:id", async (req, res) => {
+    const id = req.params.id;
+    console.log(`\nTrack price request for ID: ${id}`);
+    const oTrackData = {
+        price: req.query.price,
+        email: req.query.email,
+        name: req.query.name,
+    };
+
+    // Verify data
+    // Insert has been sent func
+
+    await db.insertTrackData(id, oTrackData);
+});
+
+// Company edit requested
 app.get("/companyedit/:id", async (req, res) => {
     const id = req.params.id;
     console.log(`\nCompany data edit request for ID: ${id}`);
@@ -76,12 +105,13 @@ app.get("/companyedit/:id", async (req, res) => {
     console.log(`Query params: ${JSON.stringify(req.query)}`);
     const oEditData = {};
     oEditData.text = req.query.text;
-    if (req.query.foundingYear === "Not available") {
+
+    if (req.query.foundingYear.length === 0) {
         oEditData.foundingYear = null;
     } else {
         oEditData.foundingYear = req.query.foundingYear;
     }
-    if (req.query.logo === "Not available") {
+    if (req.query.logo.length === 0) {
         oEditData.logo = null;
     } else {
         oEditData.logo = req.query.logo;
@@ -91,6 +121,13 @@ app.get("/companyedit/:id", async (req, res) => {
 
     console.log("Redirecting to company");
     res.redirect(`/company/${id}`);
+});
+
+// About page requested
+app.get("/about", async (req, res) => {
+    console.log("About page requested");
+    console.log("Rendering about page");
+    res.render("about");
 });
 
 // Homepage requested

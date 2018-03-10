@@ -1,5 +1,4 @@
-var id = document.getElementsByTagName("body")[0].id;
-var editButton = document.getElementById("editButton");
+var editButton = document.getElementById("trackButton");
 var closeButton = document.getElementById("closeButton");
 
 editButton.onclick = function () {

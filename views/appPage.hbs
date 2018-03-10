@@ -2,81 +2,120 @@
 <html>
     <head>
         <title>{{title}}</title>
-        <link rel="stylesheet" type="text/css" href="/css/main.css">
+        {{> defaultHead}}
     </head>
     {{> navBar}}
     <body id="{{steam_id}}">
-        <div id="appTitle">
-            <h1>{{title}}</h1>
+        <div id="overlayWrapper">
+            <div id="overlay">
+                <a href="javascript:void(0)" id="closeButton">Close</a>
+
+                <form action="/track/{{steam_id}}" target="_self" id="trackInput">
+                    <h3 class="trackInfo">Tracking:</h3>
+                    <h3 class="trackInfo">{{title}}</h3>
+                    <img src={{thumbnail}} alt="App thumbnail">
+                    <h3 id="trackPriceH3">Price:</h3>
+                    <input type="number" name="price" step="0.01" min="0" max="999.99" maxlength="5" placeholder="Input the price you want to track here" required class="normalInput">
+                    <h3>Email:</h3>
+                    <input type="email" name="email" maxlength="255" placeholder="Input your email here" required class="normalInput">
+                    <h3>Name:</h3>
+                    <input type="text" name="name" maxlength="100" placeholder="Input a name here" required class="normalInput">
+                    <br>
+                    <input type="submit" value="Track price!" id="submitTrackButton" class="buttonGreen">
+                </form>                
+            </div>
         </div>
+
         <div id="content">
+            <div id="appTitle">
+                <h1><a href="http://store.steampowered.com/app/{{steam_id}}">{{title}}</a></h1>
+            </div>
+
             <div id="info">
-                <div id="genericInfo">
-                    <div id="price">
-                        {{> price}}
-                    </div>
-                    <div id="developers">
-                        {{#if developers}}
-                            <span>Developer(s):</span>
-                        {{#each developers}}
-                            <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
-                        {{/each}}
-                        {{else}}
-                            <span class="notAvailable">Not available</span>
-                        {{/if}}
-                    </div>
-                    <div id="publishers">
-                        {{#if publishers}}
-                            <span>Publisher(s):</span>
-                        {{#each publishers}}
-                            <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
-                        {{/each}}
-                        {{else}}
-                            <span class="notAvailable">Not available</span>
-                        {{/if}}
-                    </div>
-                    <span id="releaseDate">Release date: {{release_date}} {{#unless release_date}}Not available{{/unless}}</span>
-                </div>
+                <div id="genericInfoRatingWrapper">
+                    <div id="genericInfo">
+                        <h2 class="appPageInfoTitle">INFORMATION</h2>
+                        <ul>
+                            <li onclick="switchTabs(event, 'tab-1')" id="tab-1-button" class="tabButton active">Basic Information</li>
+                            <li onclick="switchTabs(event, 'tab-2')" id="tab-2-button" class="tabButton">Steam Spy Information</li>
+                        </ul>
 
-                <div id="steamSpyInfo">
-                    <span id="owners">Owners: {{owners}} {{#unless owners}}Not available{{/unless}}</span>
-                    <br>
-                    <span id="playersForever">Total players: {{players_forever}} {{#unless players_forever}}Not available{{/unless}}</span>
-                    <br>
-                    <span id="players2Weeks">Players in the last 2 weeks: {{players_2weeks}} {{#unless players_2weeks}}Not available{{/unless}}</span>
-                    <br>
-                    <span id="averageForever">Average players: {{average_forever}} {{#unless average_forever}}Not available{{/unless}}</span>
-                    <br>
-                    <span id="average2Weeks">Average players in the last 2 weeks: {{average_2weeks}} {{#unless average_2weeks}}Not available{{/unless}}</span>
-                    <br>
-                    <span id="medianForever">Median players: {{median_forever}} {{#unless median_forever}}Not available{{/unless}}</span>
-                    <br>
-                    <span id="median2Weeks">Median players in the last 2 weeks: {{median_2weeks}} {{#unless median_2weeks}}Not available{{/unless}}</span>
-                </div>
+                        <div id="tab-1" class="tabContent">
+                            <div id="price">
+                                {{> price}}
+                            </div>
+                            <div id="track">
+                                <button id="trackButton" class="buttonGreen">Track</button>
+                            </div>                         
+                            <div id="developers">
+                                <span>Developer(s):</span>
+                                {{#if developers}}
+                                {{#each developers}}
+                                    <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
+                                {{/each}}
+                                {{else}}
+                                    <span class="notAvailable">Not available</span>
+                                {{/if}}
+                            </div>
+                            <div id="publishers">
+                                <span>Publisher(s):</span>
+                                {{#if publishers}}
+                                {{#each publishers}}
+                                    <span class="devPubName"><a href="/company/{{id}}">{{name}}</a></span>
+                                {{/each}}
+                                {{else}}
+                                    <span class="notAvailable">Not available</span>
+                                {{/if}}
+                            </div>
+                            <div id="releaseDate">
+                                Release date: <strong>{{release_date}}</strong> {{#unless release_date}}Not available{{/unless}}
+                            </div>
+                        </div>
 
-                <div id="rating">
-                    <div id="ratingChart">
-                        <canvas id="ratingCanvas"></canvas>
-                    </div>
-                    <div id="ratingInfo">
-                        <div id="ratingText">
-                            Rating text: {{steam_rating_text}} {{#unless steam_rating_text}}Not available{{/unless}}
+                        <div id="tab-2" class="tabContent">
+                            <div id="steamSpyInfo">
+                                <span id="owners">Owners: {{#if owners}}<strong>{{owners}}</strong>{{else}}Not available{{/if}}</span>
+                                <br>
+                                <span id="playersForever">Total players: {{#if players_forever}}<strong>{{players_forever}}</strong>{{else}}Not available{{/if}}</span>
+                                <br>
+                                <span id="players2Weeks">Players in the last 2 weeks: {{#if players_2weeks}}<strong>{{players_2weeks}}</strong>{{else}}Not available{{/if}}</span>
+                                <br>
+                                <span id="averageForever">Average players: {{#if average_forever}}<strong>{{average_forever}}</strong>{{else}}Not available{{/if}}</span>
+                                <br>
+                                <span id="average2Weeks">Average players in the last 2 weeks: {{#if average_2weeks}}<strong>{{average_2weeks}}</strong>{{else}}Not available{{/if}}</span>
+                                <br>
+                                <span id="medianForever">Median players: {{#if median_forever}}<strong>{{median_forever}}</strong>{{else}}Not available{{/if}}</span>
+                                <br>
+                                <span id="median2Weeks">Median players in the last 2 weeks: {{#if median_2weeks}}<strong>{{median_2weeks}}</strong>{{else}}Not available{{/if}}</span>
+                            </div>
                         </div>
-                        <div id="ratingPosNegDiv">
-                            <div id="ratingPositive" class="ratingPosNeg">Positive: {{steam_rating_positive}} {{#unless steam_rating_positive}}Not available{{/unless}}</div>
-                            <div id="ratingNegative" class="ratingPosNeg">Negative: {{steam_rating_negative}} {{#unless steam_rating_negative}}Not available{{/unless}}</div>
-                        </div>
                     </div>
-                    <div id="ratingMetacriticLink">
-                        {{#if metacritic_link}}
-                        <a href="{{metacritic_link}}">Metacritic link</a>
-                        {{else}}
-                        <span>Metacritic link not available</span>
-                        {{/if}}
+                    <div id="rating">
+                        <h2 class="appPageInfoTitle">RATING</h2>
+                        <div id="ratingChart">
+                            <canvas id="ratingCanvas"></canvas>
+                        </div>
+                        <div id="ratingInfo">
+                            <div id="ratingText">
+                                <span class="{{ratingStatus}}">{{steam_rating_text}}</span> {{#unless steam_rating_text}}Rating text not available{{/unless}}
+                            </div>
+                            <div id="ratingPosNegDiv">
+                                <div class="ratingPosNeg">Positive: {{#if steam_rating_positive}}<span class="ratingPositive">{{steam_rating_positive}}</span>{{else}}Not available{{/if}}</div>
+                                <div class="ratingPosNeg">Negative: {{#if steam_rating_negative}}<span class="ratingNegative">{{steam_rating_negative}}</span>{{else}}Not available{{/if}}</div>
+                            </div>
+                        </div>
+                        <div id="ratingMetacriticLink">
+                            {{#if metacritic_link}}
+                            <a href="{{metacritic_link}}">Metacritic link</a>
+                            {{else}}
+                            <span>Metacritic link not available</span>
+                            {{/if}}
+                        </div>
                     </div>
                 </div>
 
                 <div id="priceCharts">
+                    <h2 class="appPageInfoTitle">PRICE CHART</h2>
                     <div id="priceHistory">
                         <canvas id="priceHistoryCanvas"></canvas>
                     </div>
@@ -86,8 +125,10 @@
 
         {{> footer}}
 
+        <script src="/js/appPageTabs.js"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+        <script src="/js/track.js"></script>
         <script src="/js/textInDonutChart.js"></script>
         <script src="/js/ratingChart.js"></script>
     </body>

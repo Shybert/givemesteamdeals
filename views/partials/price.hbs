@@ -1,14 +1,17 @@
-{{#if on_sale}}
-<div class="discountPercentDiv">
-    <span id="discountPercent">{{discount_percent}}%</span>
-</div>
-<div class="priceOnSale">
-    <span class="beforePrice">$ {{priceHistory.price}}</span>
-    <br>
-    <span class="afterPrice">$ {{saleHistory.price}}</span>
-</div>
-{{else}}
-    <div class="normalPrice">
-        $ {{priceHistory.price}}
+<div id="priceInfo">
+    {{#if on_sale}}
+    <div class="discountPercentDiv">
+        <div class="discountPercent">{{discount_percent}}%</div>
     </div>
-{{/if}}
+    <div class="priceOnSale">
+        <div class="beforePrice">$ {{priceHistory.price}}</div>
+        <div class="afterPrice">$ {{saleHistory.price}}</div>
+    </div>
+    {{else}}
+        <div class="normalPriceParent">
+            <div class="normalPrice">
+                $ {{priceHistory.price}}
+            </div> 
+        </div>
+    {{/if}}
+</div>

@@ -3,7 +3,7 @@ const knex = require("knex")({
     client: "mysql",
     connection: {
         user: "root",
-        password: "nSPemHJ5Hc",
+        password: "3oFkAlziyG",
         database: "gamesdb",
     },
     useNullAsDefault: true,
@@ -179,14 +179,75 @@ module.exports.searchDB = async (searchTerm) => {
     }
 };
 
+module.exports.checkTrackId = async (dealTrackId) => {
+    try {
+        console.log("Checking deal track ID");
+
+        console.log("Getting information for ID");
+        const oDealTrack = (await knex.select("tracked_price", "app_steam_id").from("deal_track").where("deal_track_id", dealTrackId))[0];
+        console.log(oDealTrack);
+
+        console.log("Getting current price for game");
+        const CurrentPrice = (await knex.select("price").from("price_history").where("end_date", null).andWhere("app_steam_id", oDealTrack.app_steam_id))[0].price;
+        console.log(CurrentPrice);
+
+        console.log("Comparing prices");
+        if (oDealTrack.tracked_price > CurrentPrice) {
+            // Tracked price is bigger than current price, send email
+            console.log("Tracked price is bigger than current price");
+        } else {
+            // Tracked price is smaller than current price, do not send any email
+            console.log("Tracked price is not bigger than current price");
+        }
+    } catch (err) {
+        return console.error(`Error while checking track ID: ${err}`);
+    }
+};
+
+module.exports.insertTrackData = async (id, obj) => {
+    try {
+        misc.log(id, "Inserting track data");
+
+        const trackId = (await knex("deal_track").insert({
+            app_steam_id: id,
+            tracked_price: obj.price,
+            email: obj.email,
+            user_name: obj.name,
+        }))[0];
+
+        console.log("Checking current status of track");
+        await checkTrackId(trackId);
+
+        return;
+    } catch (err) {
+        return console.error(`Error while inserting track data: ${err}`);
+    }
+}
+
 module.exports.insertCompanyData = async (id, obj) => {
     try {
         misc.log(id, "Updating company data");
+        misc.log(id, "Inserting new description");
         await knex("company").where("company_id", id).update(({
             text: obj.text,
-            founding_year: obj.foundingYear,
-            logo: obj.logo,
         }));
+
+        misc.log(id, "Checking if founding_year is empty");
+        console.log(obj.foundingYear);
+        if (obj.foundingYear !== null) {
+            misc.log(id, "New founding year submitted");
+            await knex("company").where("company_id", id).update(({ founding_year: obj.foundingYear }));
+        } else {
+            misc.log(id, "New founding year not submitted, not inserting");
+        }
+
+        misc.log(id, "Checking if logo is empty");
+        if (obj.logo !== null) {
+            misc.log(id, "New logo submitted");
+            await knex("company").where("company_id", id).update(({ logo: obj.logo }));
+        } else {
+            misc.log(id, "New logo not submitted, not inserting");
+        }
 
         misc.log(id, "Company date updated");
         return null;
@@ -233,5 +294,30 @@ async function getAllTimePriceAndSaleInfo(id, obj) {
         return oWithPriceSale;
     } catch (err) {
         console.error(`Error while getting all time price and sale info: ${err}`);
+    }
+}
+
+async function checkTrackId(dealTrackId) {
+    try {
+        console.log("Checking deal track ID");
+
+        console.log("Getting information for ID");
+        const oDealTrack = (await knex.select("tracked_price", "app_steam_id").from("deal_track").where("deal_track_id", dealTrackId))[0];
+        console.log(oDealTrack);
+
+        console.log("Getting current price for game");
+        const CurrentPrice = (await knex.select("price").from("price_history").where("end_date", null).andWhere("app_steam_id", oDealTrack.app_steam_id))[0].price;
+        console.log(CurrentPrice);
+
+        console.log("Comparing prices");
+        if (oDealTrack.tracked_price > CurrentPrice) {
+            // Tracked price is bigger than current price, send email
+            console.log("Tracked price is bigger than current price");
+        } else {
+            // Tracked price is smaller than current price, do not send any email
+            console.log("Tracked price is not bigger than current price");
+        }
+    } catch (err) {
+        return console.error(`Error while checking track ID: ${err}`);
     }
 }
