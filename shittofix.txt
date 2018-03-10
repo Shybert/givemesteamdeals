@@ -1,3 +1,0 @@
-Don't display chart if negative/positive rating is missing and tell user in a not bad way
-Hide/grey out "Not available"s
-Send error message to site if price data requests go awry
