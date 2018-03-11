@@ -30,22 +30,21 @@ module.exports.log = async (id, message) => {
     }
 };
 
-// Generate range of dates
-// https://stackoverflow.com/questions/4413590/javascript-get-array-of-dates-between-2-dates
-Date.prototype.addDays = function(days) {
-    const date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-}
+// Checking track data
+module.exports.checkTrackData = async (oTrackData) => {
+    try {
+        console.log("Checking track data");
 
-module.exports.getDateRange = async (startDate, stopDate) => {
-    const dateArray = [];
-    let currentDate = startDate;
-    while (currentDate <= stopDate) {
-        dateArray.push(new Date(currentDate));
-        currentDate = currentDate.addDays(1);
+        // Checks if price is a number and if it is lower/higher than 0/999.99
+        console.log("Checking if price is valid");
+        if (typeof oTrackData.price !== "number" || oTrackData.price < 0 || oTrackData.price > 999.99) {
+            console.log("Invalid price");
+            throw new Error("Invalid price, must be a number between 0 and 999.99");
+        }
+    } catch (err) {
+        console.log("?");
+        throw err;
     }
-    return dateArray;
 };
 
 // // Fetch a picture from steam

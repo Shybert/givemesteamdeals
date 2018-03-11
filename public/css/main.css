@@ -48,14 +48,6 @@ textarea {
     padding-top: 0.5em;
 }
 
-/* Index */
-#indexBackground {
-    height: 50vh;
-    width: 100%;
-}
-#indexLogo {
-}
-
 /* Game box related tags */
 ul#gameList {
     list-style-type: none;

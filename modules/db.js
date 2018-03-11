@@ -3,7 +3,7 @@ const knex = require("knex")({
     client: "mysql",
     connection: {
         user: "root",
-        password: "3oFkAlziyG",
+        password: "nSPemHJ5Hc",
         database: "gamesdb",
     },
     useNullAsDefault: true,
@@ -114,6 +114,9 @@ module.exports.getChartData = async (id) => {
         misc.log(id, "Finished fetching price history chart data");
 
         misc.log(id, "Finished fetching chart data");
+
+        oChartData = await formatChartData(oChartData);
+
         return oChartData;
     } catch (err) {
         console.error(`Error while fetching chart data: ${err}`);
@@ -320,4 +323,51 @@ async function checkTrackId(dealTrackId) {
     } catch (err) {
         return console.error(`Error while checking track ID: ${err}`);
     }
+}
+
+async function formatChartData(oChartData) {
+    console.log("Formatting chart data");
+    const priceHistory = oChartData.priceHistory;
+    const labels = [];
+    const priceData = [];
+    let highestPrice = 0;
+
+    for (let i = 0; i < priceHistory.length; i += 1) {
+        let startDate = new Date(priceHistory[i].start_date);
+        startDate = startDate.getTime();
+
+        let endDate;
+        if (priceHistory[i].end_date === null) {
+            // Set end_date as current date, since there is none for this entry
+            endDate = new Date(Date.now());
+            endDate = endDate.getTime();
+        } else {
+            // There is an entry for end_date, set this value
+            endDate = new Date(priceHistory[i].end_date);
+            endDate = endDate.getTime();
+        }
+        console.log(`Start date: ${startDate} | End date: ${endDate}`);
+
+        for (let j = startDate; j < endDate; j += 86400000) {
+            // Convert startDate to ISO string, then include only the date in the array
+            labels.push(((new Date(j)).toISOString()).substr(0, 10));
+            priceData.push(priceHistory[i].price);
+        }
+
+        // Check if current price is the highest, if so set as highestPrice
+        if (priceHistory[i].price * 1.25 > highestPrice) {
+            highestPrice = priceHistory[i].price;
+            // Multiply by 1.25 to get good looking chart
+            highestPrice *= 1.25;
+            console.log(`highestPrice: ${highestPrice}`);
+        }
+    }
+
+    // Put into an object and return
+    const oFormattedChartData = oChartData;
+    oFormattedChartData.labels = labels;
+    oFormattedChartData.priceData = priceData;
+    oFormattedChartData.highestPrice = highestPrice;
+    console.log("Finished formatting chart data");
+    return oFormattedChartData;
 }

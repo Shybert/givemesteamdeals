@@ -8,9 +8,9 @@ $(document).ready(() => {
         if (data === "noRating") {
             console.log("Needed data for rating chart missing");
         } else {
-            console.log(`Rating data is: ${JSON.stringify(data)}`);
+            console.log(`Chart data is: ${JSON.stringify(data)}`);
             makeRatingChart(data);
-            parsePriceHistoryData(data);
+            makePriceHistoryChart(data);
         }
     });
 });
@@ -49,58 +49,58 @@ function makeRatingChart(data) {
     });
 }
 
-function parsePriceHistoryData(data) {
-    const priceObj = {
-        priceHistory: {
-        },
-        saleHistory: {
-        },
-    };
+// function parsePriceHistoryData(data) {
+//     const priceObj = {
+//         priceHistory: {
+//         },
+//         saleHistory: {
+//         },
+//     };
 
-    const priceHistoryObj = data.priceHistory;
-    const labels = [];
-    const parsedPriceHistoryData = [];
-    let highestPrice = 0;
+//     const priceHistoryObj = data.priceHistory;
+//     const labels = [];
+//     const parsedPriceHistoryData = [];
+//     let highestPrice = 0;
 
-    // Setting up the correct current date
-    const currentDate = getCurrentDate();
+//     // Setting up the correct current date
+//     const currentDate = getCurrentDate();
 
-    for (let i = 0; i < priceHistoryObj.length; i += 1) {
-        labels.push(priceHistoryObj[i].start_date.substr(0, 10));
-        parsedPriceHistoryData.push(priceHistoryObj[i].price);
+//     for (let i = 0; i < priceHistoryObj.length; i += 1) {
+//         labels.push(priceHistoryObj[i].start_date.substr(0, 10));
+//         parsedPriceHistoryData.push(priceHistoryObj[i].price);
 
-        if (i === priceHistoryObj.length - 1) {
-            // Set up price for today
-            labels.push(currentDate);
-            parsedPriceHistoryData.push(priceHistoryObj[i].price);
-            if (priceHistoryObj[i].price > highestPrice) {
-                highestPrice = priceHistoryObj[i].price;
-            }
-        }
-    }
-    console.log(labels);
-    console.log(parsedPriceHistoryData);
+//         if (i === priceHistoryObj.length - 1) {
+//             // Set up price for today
+//             labels.push(currentDate);
+//             parsedPriceHistoryData.push(priceHistoryObj[i].price);
+//             if (priceHistoryObj[i].price > highestPrice) {
+//                 highestPrice = priceHistoryObj[i].price;
+//             }
+//         }
+//     }
+//     console.log(labels);
+//     console.log(parsedPriceHistoryData);
 
-    // Multiply highest price by 2, to get a good looking chart
-    highestPrice *= 2;
+//     // Multiply highest price by 2, to get a good looking chart
+//     highestPrice *= 2;
 
-    priceObj.priceHistory.labels = labels;
-    priceObj.priceHistory.data = parsedPriceHistoryData;
-    console.log(priceObj);
-    makePriceHistoryChart(priceObj, highestPrice);
-}
+//     priceObj.priceHistory.labels = labels;
+//     priceObj.priceHistory.data = parsedPriceHistoryData;
+//     console.log(priceObj);
+//     makePriceHistoryChart(priceObj, highestPrice);
+// }
 
-function makePriceHistoryChart(data, highestPrice) {
+function makePriceHistoryChart(data) {
     const ctx = document.getElementById("priceHistoryCanvas").getContext("2d");
     const priceHistoryChart = new Chart(ctx, {
         type: "line",
         data: {
-            labels: data.priceHistory.labels,
+            labels: data.labels,
             datasets: [{
                 label: "Price",
                 backgroundColor: "#388E3C",
                 lineTension: 0,
-                data: data.priceHistory.data,
+                data: data.priceData,
             }],
         },
         options: {
@@ -108,7 +108,7 @@ function makePriceHistoryChart(data, highestPrice) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: highestPrice,
+                        suggestedMax: data.highestPrice,
                     },
                 }],
             },

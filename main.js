@@ -82,18 +82,22 @@ app.get("/api/chart/:id", async (req, res) => {
 
 // Price track requested
 app.get("/track/:id", async (req, res) => {
-    const id = req.params.id;
-    console.log(`\nTrack price request for ID: ${id}`);
-    const oTrackData = {
-        price: req.query.price,
-        email: req.query.email,
-        name: req.query.name,
-    };
+    try {
+        const id = req.params.id;
+        console.log(`\nTrack price request for ID: ${id}`);
+        const oTrackData = {
+            price: req.query.price,
+            email: req.query.email,
+            name: req.query.name,
+        };
 
-    // Verify data
-    // Insert has been sent func
+        await misc.checkTrackData(oTrackData);
+        // Insert has been sent func
 
-    await db.insertTrackData(id, oTrackData);
+        // await db.insertTrackData(id, oTrackData);
+    } catch (err) {
+        throw err;
+    }
 });
 
 // Company edit requested
@@ -157,6 +161,12 @@ app.use(async (req, res) => {
     console.log("\n404 error encountered");
     res.status(404);
     res.render("404");
+});
+
+// Error handling
+app.use(async (err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke!");
 });
 
 app.listen(app.get("port"), async () => {
