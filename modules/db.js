@@ -3,7 +3,7 @@ const knex = require("knex")({
     client: "mysql",
     connection: {
         user: "root",
-        password: "nSPemHJ5Hc",
+        password: "3oFkAlziyG",
         database: "gamesdb",
     },
     useNullAsDefault: true,
@@ -225,7 +225,7 @@ module.exports.insertTrackData = async (id, obj) => {
     } catch (err) {
         return console.error(`Error while inserting track data: ${err}`);
     }
-}
+};
 
 module.exports.insertCompanyData = async (id, obj) => {
     try {
