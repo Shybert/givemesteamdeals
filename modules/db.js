@@ -1,4 +1,5 @@
 const misc = require("../modules/misc");
+const mailer = require("node-mailer");
 const knex = require("knex")({
     client: "mysql",
     connection: {
@@ -323,6 +324,15 @@ async function checkTrackId(dealTrackId) {
     } catch (err) {
         return console.error(`Error while checking track ID: ${err}`);
     }
+}
+
+async function sendEmail() {
+    const smtpTransport = mailer.createTransport("SMTP", {
+        auth: {
+            user: "givemesteamdeals@protonmail.com",
+            pass: "iLJL52YDUNnr6Rpha9H7DcOZi6U80jRD9JqEBfgcciDAnWpdvNcMejk0DTV4C1wesCWYe4u4tVISSd9TiYKe7TmSYPiJPeYm0EEv"
+        },
+    })
 }
 
 async function formatChartData(oChartData) {

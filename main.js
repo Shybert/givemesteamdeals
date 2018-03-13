@@ -91,10 +91,10 @@ app.get("/track/:id", async (req, res) => {
             name: req.query.name,
         };
 
-        await misc.checkTrackData(oTrackData);
+        // await misc.checkTrackData(oTrackData);
         // Insert has been sent func
 
-        // await db.insertTrackData(id, oTrackData);
+        await db.insertTrackData(id, oTrackData);
     } catch (err) {
         throw err;
     }
@@ -169,6 +169,6 @@ app.use(async (err, req, res, next) => {
     res.status(500).send("Something broke!");
 });
 
-app.listen(app.get("port"), async () => {
+app.listen(app.get("port"), "209.250.245.11", async () => {
     console.log(`Started server, listening on port ${app.get("port")}`);
 });
