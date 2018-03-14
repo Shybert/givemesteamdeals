@@ -3,7 +3,7 @@ const knex = require("knex")({
     client: "mysql",
     connection: {
         user: "root",
-        password: "3oFkAlziyG",
+        password: "nSPemHJ5Hc",
         database: "gamesdb",
     },
     useNullAsDefault: true,
