@@ -4,8 +4,8 @@
         <title>{{title}}</title>
         {{> defaultHead}}
     </head>
-    {{> navBar}}
     <body id="{{steam_id}}">
+        {{> navBar}}
         <div id="overlayWrapper">
             <div id="overlay">
                 <a href="javascript:void(0)" id="closeButton">Close</a>
@@ -17,9 +17,7 @@
                     <h3 id="trackPriceH3">Price:</h3>
                     <input type="number" name="price" step="0.01" min="0" max="999.99" maxlength="5" placeholder="Input the price you want to track here" required class="normalInput">
                     <h3>Email:</h3>
-                    <input type="email" name="email" maxlength="255" placeholder="Input your email here" required class="normalInput">
-                    <h3>Name:</h3>
-                    <input type="text" name="name" maxlength="100" placeholder="Input a name here" required class="normalInput">
+                    <input type="email" name="mail" maxlength="255" placeholder="Input your email here" required class="normalInput">
                     <br>
                     <input type="submit" value="Track price!" id="submitTrackButton" class="buttonGreen">
                 </form>                
@@ -125,11 +123,7 @@
 
         {{> footer}}
 
-        <script src="/js/appPageTabs.js"></script>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
-        <script src="/js/track.js"></script>
-        <script src="/js/textInDonutChart.js"></script>
-        <script src="/js/charts.js"></script>
+        <script src="/js/appPage.js"></script>
     </body>
 </html>

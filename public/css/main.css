@@ -94,9 +94,6 @@ ul#gameList li a {
     justify-content: center;
     align-items: center;
 }
-#priceInfo {
-    display: flex;
-}
 .normalPriceParent, .priceOnSale {
     width: 5em;
     background-color: #222;
@@ -157,7 +154,7 @@ ul#gameList li a {
     box-sizing: border-box;
 }
 
-#priceInfo {
+.priceInfo {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -292,17 +289,6 @@ ul#gameList li a {
     padding: 1em 0.5em;
     background-color: #edeff0;
 }
-/* #companyInput #submitCompanyButton, #editButton {
-    background: #4CAF50;
-    border: none;
-    box-shadow: 0 2px 0 #3f6f21;
-    color: white;
-    margin-top: 1em;
-}
-#companyInput #submitCompanyButton:hover, #editButton:hover {
-    cursor: pointer;
-    background-color: #388E3C;
-} */
 #companyLogo {
     max-width: 20em;
     display: block;
@@ -333,6 +319,15 @@ ul#gameList li a {
     min-width: 10em;
 }
 
+/* Track Center */
+#trackCenterInput {
+    text-align: center;
+    margin: 0 1em;
+}
+h4.trackTitle {
+    margin-bottom: 0;
+}
+
 /* About page */
 #about {
     margin: 1em;
@@ -344,7 +339,36 @@ nav {
     position: sticky;
     top: 0;
     left: 0;
+    height: 3em;
     z-index: 1;
+}
+nav ul {
+    margin: 0;
+    padding: 0;
+    color: white;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+nav ul li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+nav ul li a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 3em;
+    padding: 0 0.5em;
+    box-sizing: border-box;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+nav ul li a:hover {
+    background-color: #3f6f21;
 }
 nav form {
     display: flex;
@@ -352,15 +376,18 @@ nav form {
     align-items: center;
     min-height: 3em;
     max-height: 3em;
+    color: #555;
 }
 nav form #searchBar {
     min-height: 2.25em;
     min-width: 30em;
     text-indent: 2em;
+    margin: 0 0.5em;
 }
 nav form .fa-search {
+    width: 0;
     position: relative;
-    left: 1.5em;
+    left: 1em;
 }
 
 nav #navLogo img {
@@ -385,11 +412,11 @@ footer {
 
 /* Small screen overrides */
 @media (max-width: 600px) {
-    nav form #searchBar {
-        min-width: 90%;
+    nav form {
+        min-width: 80%;
     }
-    nav #navLogo {
-        display: none;
+    nav form #searchBar {
+        min-width: 80%;
     }
 
     #genericInfoRatingWrapper {
@@ -398,7 +425,8 @@ footer {
 }
 @media (max-width: 400px) {
     #overlay {
-        width: 300px;
+        min-width: 250px;
+        max-width: 250px;
     }
 }
 @media (max-width: 25em) {

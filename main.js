@@ -76,8 +76,30 @@ app.get("/api/chart/:id", async (req, res) => {
     const oChartData = await db.getChartData(id);
 
     console.log("Sending chart data");
-    console.log(oChartData);
+    // console.log(oChartData);
     res.send(oChartData);
+});
+
+app.get("/trackcenter", async (req, res) => {
+    if (!req.query.mail) {
+        console.log("No mail specified, show tracking center home");
+        res.render("trackCenter");
+    } else {
+        console.log("Tracking center specified, show tracking center for e-mail");
+        const aTrackData = await db.getTrackData(req.query.mail);
+
+        console.log("Looking up info for each tracked game");
+        for (let i = 0; i < aTrackData.length; i += 1) {
+            aTrackData[i] = await db.getPriceBoxInfo(aTrackData[i].app_steam_id, aTrackData[i]);
+            Object.assign(aTrackData[i], (await db.getBasicData(aTrackData[i].app_steam_id))[0]);
+        }
+        console.log(await Promise.all(aTrackData));
+
+        // Assign array to an object
+        const obj = {};
+        obj.data = aTrackData;
+        res.render("trackCenter", obj);
+    }
 });
 
 // Price track requested
@@ -87,14 +109,13 @@ app.get("/track/:id", async (req, res) => {
         console.log(`\nTrack price request for ID: ${id}`);
         const oTrackData = {
             price: req.query.price,
-            email: req.query.email,
-            name: req.query.name,
+            mail: req.query.mail,
         };
 
-        // await misc.checkTrackData(oTrackData);
-        // Insert has been sent func
-
         await db.insertTrackData(id, oTrackData);
+
+        console.log("Returning to app page");
+        res.redirect(`/id/${id}`);
     } catch (err) {
         throw err;
     }
@@ -159,16 +180,17 @@ app.get("/", async (req, res) => {
 // No webpages found, 404 error
 app.use(async (req, res) => {
     console.log("\n404 error encountered");
+    console.log(req.url);
     res.status(404);
     res.render("404");
 });
 
 // Error handling
-app.use(async (err, req, res, next) => {
+app.use(async (err, req, res) => {
     console.error(err.stack);
     res.status(500).send("Something broke!");
 });
 
-app.listen(app.get("port"), "209.250.245.11", async () => {
+app.listen(app.get("port"), async () => {
     console.log(`Started server, listening on port ${app.get("port")}`);
 });

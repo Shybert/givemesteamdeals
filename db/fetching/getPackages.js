@@ -114,12 +114,12 @@ function getPackages(callback) {
     }
 
     function createPackageMasterTable(packageId, appIds) {
-        connection.query(`INSERT INTO package_master(app_steam_id) VALUES((SELECT steam_id FROM app WHERE steam_id = ${packageId}))`, (err, results) => {
+        connection.query(`INSERT INTO package(app_steam_id) VALUES((SELECT steam_id FROM app WHERE steam_id = ${packageId}))`, (err, results) => {
             if (err) {
-                return console.log(`Error while creating Package Master table with STEAM_ID(${packageId}): ${err}`);
+                return console.log(`Error while creating Package table with STEAM_ID(${packageId}): ${err}`);
             }
             if (results) {
-                console.log(`Created package master table`);
+                console.log(`Created package table`);
                 checkIfAppsExist(packageId, appIds);
             }
         });
@@ -149,11 +149,11 @@ function getPackages(callback) {
     }
 
     function insertIntoAppPackageJoinTable(packageId, id) {
-        connection.query(`  INSERT INTO app_package(package_master_package_master_id, app_steam_id) VALUES(
-                                        (SELECT package_master_id FROM package_master WHERE app_steam_id = ${packageId}),
+        connection.query(`  INSERT INTO app_package(package_package_id, app_steam_id) VALUES(
+                                        (SELECT package_id FROM package WHERE app_steam_id = ${packageId}),
                                         (SELECT steam_id FROM app WHERE steam_id = ${id}))`, (err, results) => {
             if (err) {
-                return console.log(`Error while setting up app_package join table, with package_master_id(${packageId}) and steam_id(${id}): ${err}`);
+                return console.log(`Error while setting up app_package join table, with package_id(${packageId}) and steam_id(${id}): ${err}`);
             }
             if (results) {
                 console.log("App_package join table created successfully");

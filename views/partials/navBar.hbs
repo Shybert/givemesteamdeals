@@ -1,11 +1,14 @@
 <nav>
-    <div id="navLogo">
-        <a href="/"><img src="/pics/tempgivemesteamdeals.png" alt="Give Me Steam Deals Logo"></a>
-    </div>
+    <ul>
+        <li id="home"><a href="/"><i class="fas fa-home fa-2x"></i></a></li>
+        <li>
+            <form action="/search" method="GET">
+                <i class="fa fa-search searchIcon"></i>
+                <input type="text" name="query" id="searchBar" placeholder="Search for games...">
+                <input type="submit" style="position: absolute; left: -9999px">
+            </form>            
+        </li>
+        <li id="trackCenter"><a href="/trackcenter">Track Center</a></li>
+    </ul>
 
-    <form action="/search" method="GET">
-        <i class="fa fa-search searchIcon"></i>
-        <input type="text" name="query" id="searchBar" placeholder="Search for games...">
-        <input type="submit" style="position: absolute; left: -9999px">
-    </form>
 </nav>

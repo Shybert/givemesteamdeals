@@ -5,6 +5,54 @@
         {{> defaultHead}}
     </head>
     <body>
+        {{> navBar}}
 
+        <div id="content">
+            <h1>Tracking center</h1>
+
+            <div id="trackCenterInput">
+                <form action="/trackcenter" target="_self" id="mailInput">
+                    <h3>Input your email to see tracked games!</h3>
+                    <input type="email" name="mail" maxlength="255" placeholder="Input your email here" class="normalInput">
+                </form>                
+            </div>
+
+            {{#if data}}
+            <ul id="gameList">
+                {{#each data}}
+                <li>
+                <a href="/id/{{steam_id}}">
+                    <div class="gameBox">
+                        <div class="title">
+                            <span>{{title}}</span>
+                        </div>
+                        <div class="thumbnail"><img src={{thumbnail}} alt="App thumbnail"></div>
+                        <div class="trackCenterPrice">
+                            <div class="trackPrice">
+                                <h4 class="trackTitle">Tracked Price</h4>
+                                    <div class="priceInfo">
+                                        <div class="normalPriceParent">
+                                            <div class="normalPrice">
+                                                $ {{tracked_price}}
+                                            </div> 
+                                        </div>                                        
+                                    </div>
+                            </div>
+                            <div class="currentPrice">
+                                <h4 class="trackTitle">Normal price</h4>
+                                {{> price}}                                
+                            </div>
+                        </div>
+                    </div>       
+                </a>
+                </li>
+                {{/each}}               
+            </ul>
+
+            {{/if}}
+
+        </div>
+
+        {{> footer}}
     </body>
 </html>

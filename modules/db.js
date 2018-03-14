@@ -1,5 +1,4 @@
 const misc = require("../modules/misc");
-const mailer = require("node-mailer");
 const knex = require("knex")({
     client: "mysql",
     connection: {
@@ -132,6 +131,18 @@ module.exports.getCompanyData = async (id) => {
     return oCompanyData;
 };
 
+module.exports.getTrackData = async (mail) => {
+    try {
+        console.log("Fetching tracking data");
+        const aTrackData = await knex.select().from("price_track").where("email", mail);
+
+        console.log("Fetched track data");
+        return aTrackData;
+    } catch (err) {
+        return console.error(`Error while fetching tracking data: ${err}`);
+    }
+};
+
 module.exports.convertDataForAppPageDisplay = async (obj) => {
     try {
         const oConverted = obj;
@@ -212,16 +223,14 @@ module.exports.insertTrackData = async (id, obj) => {
     try {
         misc.log(id, "Inserting track data");
 
-        const trackId = (await knex("deal_track").insert({
+        await knex("price_track").insert({
             app_steam_id: id,
             tracked_price: obj.price,
-            email: obj.email,
+            email: obj.mail,
             user_name: obj.name,
-        }))[0];
+        });
 
-        console.log("Checking current status of track");
-        await checkTrackId(trackId);
-
+        misc.log(id, "Inserted track data");
         return;
     } catch (err) {
         return console.error(`Error while inserting track data: ${err}`);
@@ -263,7 +272,7 @@ module.exports.insertCompanyData = async (id, obj) => {
 // Internal functions go here
 async function getCurrentPriceAndSaleInfo(id, obj) {
     try {
-        misc.log(id, "Getting all time price and sale info");
+        misc.log(id, "Getting current price and sale info");
         const oWithPriceSale = obj;
 
         misc.log(id, "Fetching price history");
@@ -299,40 +308,6 @@ async function getAllTimePriceAndSaleInfo(id, obj) {
     } catch (err) {
         console.error(`Error while getting all time price and sale info: ${err}`);
     }
-}
-
-async function checkTrackId(dealTrackId) {
-    try {
-        console.log("Checking deal track ID");
-
-        console.log("Getting information for ID");
-        const oDealTrack = (await knex.select("tracked_price", "app_steam_id").from("deal_track").where("deal_track_id", dealTrackId))[0];
-        console.log(oDealTrack);
-
-        console.log("Getting current price for game");
-        const CurrentPrice = (await knex.select("price").from("price_history").where("end_date", null).andWhere("app_steam_id", oDealTrack.app_steam_id))[0].price;
-        console.log(CurrentPrice);
-
-        console.log("Comparing prices");
-        if (oDealTrack.tracked_price > CurrentPrice) {
-            // Tracked price is bigger than current price, send email
-            console.log("Tracked price is bigger than current price");
-        } else {
-            // Tracked price is smaller than current price, do not send any email
-            console.log("Tracked price is not bigger than current price");
-        }
-    } catch (err) {
-        return console.error(`Error while checking track ID: ${err}`);
-    }
-}
-
-async function sendEmail() {
-    const smtpTransport = mailer.createTransport("SMTP", {
-        auth: {
-            user: "givemesteamdeals@protonmail.com",
-            pass: "iLJL52YDUNnr6Rpha9H7DcOZi6U80jRD9JqEBfgcciDAnWpdvNcMejk0DTV4C1wesCWYe4u4tVISSd9TiYKe7TmSYPiJPeYm0EEv"
-        },
-    })
 }
 
 async function formatChartData(oChartData) {
