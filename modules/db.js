@@ -227,7 +227,6 @@ module.exports.insertTrackData = async (id, obj) => {
             app_steam_id: id,
             tracked_price: obj.price,
             email: obj.mail,
-            user_name: obj.name,
         });
 
         misc.log(id, "Inserted track data");
